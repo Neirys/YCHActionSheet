@@ -22,6 +22,13 @@
 		F8A70E1019084DC500BA6D50 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8A70DEF19084DC400BA6D50 /* UIKit.framework */; };
 		F8A70E1819084DC500BA6D50 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F8A70E1619084DC500BA6D50 /* InfoPlist.strings */; };
 		F8A70E1A19084DC500BA6D50 /* YCHActionSheetExamplesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A70E1919084DC500BA6D50 /* YCHActionSheetExamplesTests.m */; };
+		F8B4FE551908606B002B604C /* YCHActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = F8B4FE541908606B002B604C /* YCHActionSheet.m */; };
+		F8B4FE5B190899C1002B604C /* bg.png in Resources */ = {isa = PBXBuildFile; fileRef = F8B4FE5A190899C1002B604C /* bg.png */; };
+		F8B4FE5D19089CB0002B604C /* bg_50.png in Resources */ = {isa = PBXBuildFile; fileRef = F8B4FE5C19089CB0002B604C /* bg_50.png */; };
+		F8B4FE6019089E64002B604C /* YCHPushButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F8B4FE5F19089E64002B604C /* YCHPushButton.m */; };
+		F8B4FE641908A03D002B604C /* FXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8B4FE631908A03D002B604C /* FXBlurView.m */; };
+		F8B4FE661908A4F1002B604C /* bg_50_translucent.png in Resources */ = {isa = PBXBuildFile; fileRef = F8B4FE651908A4F1002B604C /* bg_50_translucent.png */; };
+		F8B4FE681908AB14002B604C /* bg_50_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = F8B4FE671908AB14002B604C /* bg_50_selected.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +62,17 @@
 		F8A70E1519084DC500BA6D50 /* YCHActionSheetExamplesTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "YCHActionSheetExamplesTests-Info.plist"; sourceTree = "<group>"; };
 		F8A70E1719084DC500BA6D50 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F8A70E1919084DC500BA6D50 /* YCHActionSheetExamplesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YCHActionSheetExamplesTests.m; sourceTree = "<group>"; };
+		F8B4FE531908606B002B604C /* YCHActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YCHActionSheet.h; sourceTree = "<group>"; };
+		F8B4FE541908606B002B604C /* YCHActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YCHActionSheet.m; sourceTree = "<group>"; };
+		F8B4FE56190862A8002B604C /* Reveal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Reveal.framework; sourceTree = "<group>"; };
+		F8B4FE5A190899C1002B604C /* bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg.png; sourceTree = "<group>"; };
+		F8B4FE5C19089CB0002B604C /* bg_50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_50.png; sourceTree = "<group>"; };
+		F8B4FE5E19089E64002B604C /* YCHPushButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YCHPushButton.h; sourceTree = "<group>"; };
+		F8B4FE5F19089E64002B604C /* YCHPushButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YCHPushButton.m; sourceTree = "<group>"; };
+		F8B4FE621908A03D002B604C /* FXBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXBlurView.h; sourceTree = "<group>"; };
+		F8B4FE631908A03D002B604C /* FXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXBlurView.m; sourceTree = "<group>"; };
+		F8B4FE651908A4F1002B604C /* bg_50_translucent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_50_translucent.png; sourceTree = "<group>"; };
+		F8B4FE671908AB14002B604C /* bg_50_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_50_selected.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +121,7 @@
 		F8A70DEA19084DC400BA6D50 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F8B4FE56190862A8002B604C /* Reveal.framework */,
 				F8A70DEB19084DC400BA6D50 /* Foundation.framework */,
 				F8A70DED19084DC400BA6D50 /* CoreGraphics.framework */,
 				F8A70DEF19084DC400BA6D50 /* UIKit.framework */,
@@ -114,6 +133,7 @@
 		F8A70DF119084DC400BA6D50 /* YCHActionSheetExamples */ = {
 			isa = PBXGroup;
 			children = (
+				F8B4FE521908604A002B604C /* Classes */,
 				F8A70DFA19084DC500BA6D50 /* YCHAppDelegate.h */,
 				F8A70DFB19084DC500BA6D50 /* YCHAppDelegate.m */,
 				F8A70DFD19084DC500BA6D50 /* Main_iPhone.storyboard */,
@@ -153,6 +173,31 @@
 				F8A70E1619084DC500BA6D50 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F8B4FE521908604A002B604C /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				F8B4FE611908A03D002B604C /* FXBlurView */,
+				F8B4FE5A190899C1002B604C /* bg.png */,
+				F8B4FE5C19089CB0002B604C /* bg_50.png */,
+				F8B4FE671908AB14002B604C /* bg_50_selected.png */,
+				F8B4FE651908A4F1002B604C /* bg_50_translucent.png */,
+				F8B4FE5E19089E64002B604C /* YCHPushButton.h */,
+				F8B4FE5F19089E64002B604C /* YCHPushButton.m */,
+				F8B4FE531908606B002B604C /* YCHActionSheet.h */,
+				F8B4FE541908606B002B604C /* YCHActionSheet.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		F8B4FE611908A03D002B604C /* FXBlurView */ = {
+			isa = PBXGroup;
+			children = (
+				F8B4FE621908A03D002B604C /* FXBlurView.h */,
+				F8B4FE631908A03D002B604C /* FXBlurView.m */,
+			);
+			path = FXBlurView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,9 +277,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8B4FE5B190899C1002B604C /* bg.png in Resources */,
 				F8A70E0219084DC500BA6D50 /* Main_iPad.storyboard in Resources */,
+				F8B4FE681908AB14002B604C /* bg_50_selected.png in Resources */,
 				F8A70E0719084DC500BA6D50 /* Images.xcassets in Resources */,
+				F8B4FE5D19089CB0002B604C /* bg_50.png in Resources */,
 				F8A70DFF19084DC500BA6D50 /* Main_iPhone.storyboard in Resources */,
+				F8B4FE661908A4F1002B604C /* bg_50_translucent.png in Resources */,
 				F8A70DF619084DC400BA6D50 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -255,8 +304,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8A70DF819084DC500BA6D50 /* main.m in Sources */,
+				F8B4FE6019089E64002B604C /* YCHPushButton.m in Sources */,
 				F8A70E0519084DC500BA6D50 /* YCHViewController.m in Sources */,
+				F8B4FE551908606B002B604C /* YCHActionSheet.m in Sources */,
 				F8A70DFC19084DC500BA6D50 /* YCHAppDelegate.m in Sources */,
+				F8B4FE641908A03D002B604C /* FXBlurView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,9 +443,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "YCHActionSheetExamples/YCHActionSheetExamples-Prefix.pch";
 				INFOPLIST_FILE = "YCHActionSheetExamples/YCHActionSheetExamples-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-framework",
+					Reveal,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -404,9 +470,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "YCHActionSheetExamples/YCHActionSheetExamples-Prefix.pch";
 				INFOPLIST_FILE = "YCHActionSheetExamples/YCHActionSheetExamples-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -471,6 +546,7 @@
 				F8A70E1F19084DC500BA6D50 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F8A70E2019084DC500BA6D50 /* Build configuration list for PBXNativeTarget "YCHActionSheetExamplesTests" */ = {
 			isa = XCConfigurationList;
@@ -479,6 +555,7 @@
 				F8A70E2219084DC500BA6D50 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
