@@ -48,6 +48,8 @@
 @interface YCHActionSheetSection : NSObject
 
 @property (copy, nonatomic) NSString *title;
+@property (strong, nonatomic, readonly) UILabel *titleLabel;
+
 @property (strong, nonatomic) NSArray *buttonTitles;
 @property (strong, nonatomic, readonly) NSArray *buttons;
 

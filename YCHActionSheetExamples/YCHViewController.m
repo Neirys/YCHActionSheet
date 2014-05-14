@@ -42,10 +42,10 @@
 //    [button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:button];
     
-    YCHActionSheetSection *section1 = [[YCHActionSheetSection alloc] initWithTitle:@"Section 1" otherButtonTitles:@"S1B1", @"S1B2", nil];
+    YCHActionSheetSection *section1 = [[YCHActionSheetSection alloc] initWithTitle:nil otherButtonTitles:@"S1B1", @"S1B2", nil];
     YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Section 2" otherButtonTitles:@"S2B1", @"S2B2", @"S2B3", nil];
     YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2] cancelButtonTitle:@"Cancel" delegate:nil];
-    actionSheet.frame = CGRectMake(10, 10, 100, 100);
+    actionSheet.frame = CGRectMake(10, 50, 100, 100);
     
     [self.view addSubview:actionSheet];
 }

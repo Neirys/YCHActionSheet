@@ -74,6 +74,7 @@
     
 }
 
+#warning PUT STATIC SIZE + HANDLE ROTATION
 - (void)setupUI
 {
     CGFloat offsetY = 0;
@@ -81,6 +82,13 @@
     for (YCHActionSheetSection *section in self.sections)
     {
         // 1°) display title
+        UILabel *titleLabel = section.titleLabel;
+        if (titleLabel)
+        {
+            titleLabel.frame = CGRectMake(0, offsetY, 300, 44);
+            [self addSubview:titleLabel];
+            offsetY += 44;
+        }
         
         // 2°) display buttons
         NSArray *buttons = section.buttons;
@@ -93,6 +101,8 @@
         
         offsetY += 10;
     }
+    
+    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, 300, offsetY + 44);
 }
 
 @end
@@ -106,6 +116,8 @@
     NSMutableArray *_mutableButtonTitles;
     NSMutableArray *_mutableButtons;
 }
+
+@property (strong, nonatomic, readwrite) UILabel *titleLabel;
 
 @end
 
@@ -126,9 +138,16 @@
         }
         va_end(args);
         
+        [self createTitleLabel];
         [self createButtons];
     }
     return self;
+}
+
+- (void)setTitle:(NSString *)title
+{
+    _title = title;
+    [self createTitleLabel];
 }
 
 - (NSArray *)buttonTitles
@@ -160,14 +179,28 @@
     return _mutableButtonTitles[index];
 }
 
+- (void)createTitleLabel
+{
+    if (!self.title)
+        return;
+    
+    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel.text = self.title;
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
+#warning BETTER WAY ?
+    self.titleLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_50"]];
+}
+
 - (void)createButtons
 {
+#warning REFRACTOR THIS 2 LINES
     UIImage *bgNormal = [[UIImage imageNamed:@"bg_50"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
     UIImage *bgSelected = [[UIImage imageNamed:@"bg_50_selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
     
     _mutableButtons = [NSMutableArray array];
     for (NSString *buttonTitle in _mutableButtonTitles)
     {
+#warning REFRACTOR BUTTON FACTORY
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         [button setTitle:buttonTitle forState:UIControlStateNormal];
         [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
