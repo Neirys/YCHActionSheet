@@ -8,9 +8,6 @@
 
 #define CHECK_OUT_OF_BOUNDS(obj, idx, r, f, ...) \
 { \
-    NSLog(@"%@", obj); \
-    NSLog(@"%@", @(idx)); \
-    NSLog(@"%@", @(obj.count)); \
     if (idx >= obj.count) \
     { \
         [NSException raise:r format:f, __VA_ARGS__]; \
@@ -18,6 +15,52 @@
 }
 
 #import "YCHActionSheet.h"
+
+/**
+ *  YCHButton class
+ */
+
+@interface YCHButton : UIButton
+@end
+
+@implementation YCHButton
+
+//- (void)drawRect:(CGRect)rect
+//{
+//    [super drawRect:rect];
+//    
+//    CGContextRef context = UIGraphicsGetCurrentContext();
+//    CGContextSetStrokeColorWithColor(context, [UIColor blackColor].CGColor);
+//    CGContextSetLineWidth(context, 1.0);
+//    CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + rect.size.height);
+//    CGContextAddLineToPoint(context, rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
+//    CGContextStrokePath(context);
+//}
+
+@end
+
+/**
+ * YCHLabel class
+ */
+
+@interface YCHLabel : UILabel
+@end
+
+@implementation YCHLabel
+
+- (void)drawRect:(CGRect)rect
+{
+    [super drawRect:rect];
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetStrokeColorWithColor(context, [UIColor blackColor].CGColor);
+    CGContextSetLineWidth(context, 2.0);
+    CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + rect.size.height);
+    CGContextAddLineToPoint(context, rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
+    CGContextStrokePath(context);
+}
+
+@end
 
 /**
  * YCHActionSheet implementation
@@ -117,7 +160,7 @@
     NSMutableArray *_mutableButtons;
 }
 
-@property (strong, nonatomic, readwrite) UILabel *titleLabel;
+@property (strong, nonatomic, readwrite) YCHLabel *titleLabel;
 
 @end
 
@@ -184,7 +227,7 @@
     if (!self.title)
         return;
     
-    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel = [[YCHLabel alloc] init];
     self.titleLabel.text = self.title;
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
 #warning BETTER WAY ?
@@ -196,19 +239,31 @@
 #warning REFRACTOR THIS 2 LINES
     UIImage *bgNormal = [[UIImage imageNamed:@"bg_50"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
     UIImage *bgSelected = [[UIImage imageNamed:@"bg_50_selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
+    UIImage *bgNormalLine = [[UIImage imageNamed:@"bg_50_l"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
+    UIImage *bgSelectedLine = [[UIImage imageNamed:@"bg_50_selected_l"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
     
     _mutableButtons = [NSMutableArray array];
     for (NSString *buttonTitle in _mutableButtonTitles)
     {
 #warning REFRACTOR BUTTON FACTORY
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        YCHButton *button = [YCHButton buttonWithType:UIButtonTypeSystem];
         [button setTitle:buttonTitle forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [button setBackgroundImage:bgNormal forState:UIControlStateNormal];
-        [button setBackgroundImage:bgSelected forState:UIControlStateSelected];
+        
+        if (buttonTitle == _mutableButtonTitles.lastObject)
+        {
+            [button setBackgroundImage:bgNormal forState:UIControlStateNormal];
+            [button setBackgroundImage:bgSelected forState:UIControlStateSelected];
+        }
+        else
+        {
+            [button setBackgroundImage:bgNormalLine forState:UIControlStateNormal];
+            [button setBackgroundImage:bgSelectedLine forState:UIControlStateSelected];
+        }
+
         
         [_mutableButtons addObject:button];
     }
 }
 
 @end
+
