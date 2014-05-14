@@ -11,7 +11,6 @@
 #import "YCHActionSheet.h"
 #import "YCHPushButton.h"
 
-#import "FXBlurView.h"
 
 @interface YCHViewController ()
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *barButton;

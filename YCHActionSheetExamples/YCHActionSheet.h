@@ -30,7 +30,9 @@
 @property (weak, nonatomic) id <YCHActionSheetDelegate> delegate;
 
 @property (strong, nonatomic) NSArray *sections;
+
 @property (copy, nonatomic) NSString *cancelButtonTitle;
+@property (strong, nonatomic, readonly) UIButton *cancelButton;
 
 - (instancetype)initWithSections:(NSArray *)sections cancelButtonTitle:(NSString *)cancelButtonTitle delegate:(id)delegate;
 

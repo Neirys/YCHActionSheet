@@ -71,6 +71,8 @@
     NSMutableArray *_mutableSections;
 }
 
+@property (strong, nonatomic, readwrite) UIButton *cancelButton;
+
 @end
 
 @implementation YCHActionSheet
@@ -80,6 +82,10 @@
     if (self = [super init])
     {
         _mutableSections = [sections mutableCopy];
+        _cancelButtonTitle = cancelButtonTitle;
+        _delegate = delegate;
+        
+        [self createCancelButton];
     }
     return self;
 }
@@ -145,7 +151,30 @@
         offsetY += 10;
     }
     
-    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, 300, offsetY + 44);
+    // 3°) display cancel
+    if (self.cancelButton)
+    {
+        self.cancelButton.frame = CGRectMake(0, offsetY, 300, 44);
+        [self addSubview:self.cancelButton];
+        offsetY += 44;
+    }
+    
+    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, 300, offsetY);
+}
+
+- (void)createCancelButton
+{
+    if (!self.cancelButtonTitle)
+        return;
+    
+#warning REFRACTOR THESE LINES
+    UIImage *bgNormal = [[UIImage imageNamed:@"bg_50"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
+    UIImage *bgSelected = [[UIImage imageNamed:@"bg_50_selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
+    
+    self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [self.cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
+    [self.cancelButton setBackgroundImage:bgNormal forState:UIControlStateNormal];
+    [self.cancelButton setBackgroundImage:bgSelected forState:UIControlStateSelected];
 }
 
 @end
@@ -260,7 +289,6 @@
             [button setBackgroundImage:bgSelectedLine forState:UIControlStateSelected];
         }
 
-        
         [_mutableButtons addObject:button];
     }
 }
