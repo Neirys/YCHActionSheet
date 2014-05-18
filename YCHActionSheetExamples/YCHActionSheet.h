@@ -17,7 +17,7 @@
 @protocol YCHActionSheetDelegate <UIActionSheetDelegate>
 
 @optional
-- (void)actionSheet:(YCHActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex inSection:(YCHActionSheetSection *)section;
+- (void)actionSheet:(YCHActionSheet *)actionSheet clickedButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex;
 
 @end
 

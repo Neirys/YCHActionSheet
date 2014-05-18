@@ -171,7 +171,10 @@
 - (void)buttonWasTouched:(id)sender
 {
     YCHButton *button = (YCHButton *)sender;
-    NSLog(@"%@ / %@", @(button.sectionIndex), @(button.buttonIndex));
+    if ([self.delegate respondsToSelector:@selector(actionSheet:clickedButtonAtIndex:sectionIndex:)])
+    {
+        [self.delegate actionSheet:self clickedButtonAtIndex:button.buttonIndex sectionIndex:button.sectionIndex];
+    }
 }
 
 - (void)setupCancelButton

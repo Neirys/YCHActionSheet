@@ -12,7 +12,8 @@
 #import "YCHPushButton.h"
 
 
-@interface YCHViewController ()
+@interface YCHViewController () <YCHActionSheetDelegate>
+
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *barButton;
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 
@@ -44,12 +45,18 @@
     YCHActionSheetSection *section1 = [[YCHActionSheetSection alloc] initWithTitle:nil otherButtonTitles:@"S1B1", @"S1B2", nil];
     YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Section 2" otherButtonTitles:@"S2B1", @"S2B2", @"S2B3", nil];
     YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2] cancelButtonTitle:@"Cancel" delegate:nil];
+    actionSheet.delegate = self;
     [actionSheet showFromView:self.view];
     
 //    actionSheet.frame = CGRectMake(10, 50, 100, 100);
 //    actionSheet.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
     
 //    [self.view addSubview:actionSheet];
+}
+
+- (void)actionSheet:(YCHActionSheet *)actionSheet clickedButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex
+{
+    NSLog(@"%@ / %@", @(sectionIndex), @(buttonIndex));
 }
 
 - (void)buttonClicked:(id)sender
