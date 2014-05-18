@@ -18,6 +18,7 @@
 
 @optional
 - (void)actionSheet:(YCHActionSheet *)actionSheet clickedButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex;
+- (void)actionSheetDidCancel:(YCHActionSheet *)actionSheet;
 
 @end
 

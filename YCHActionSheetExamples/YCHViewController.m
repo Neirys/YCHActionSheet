@@ -59,6 +59,11 @@
     NSLog(@"%@ / %@", @(sectionIndex), @(buttonIndex));
 }
 
+- (void)actionSheetDidCancel:(YCHActionSheet *)actionSheet
+{
+    NSLog(@"cancel");
+}
+
 - (void)buttonClicked:(id)sender
 {
     NSLog(@"click");

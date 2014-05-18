@@ -163,6 +163,7 @@
     if (self.cancelButton)
     {
         self.cancelButton.frame = CGRectMake(0, offsetY, 300, 44);
+        [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.cancelButton];
         offsetY += 44;
     }
@@ -175,6 +176,23 @@
     {
         [self.delegate actionSheet:self clickedButtonAtIndex:button.buttonIndex sectionIndex:button.sectionIndex];
     }
+}
+
+- (void)cancelButtonWasTouched:(id)sender
+{
+    if ([self.delegate respondsToSelector:@selector(actionSheetDidCancel:)])
+    {
+        [self.delegate actionSheetDidCancel:self];
+    }
+    
+    [self dismiss];
+}
+
+- (void)dismiss
+{
+    [UIView animateWithDuration:0.5 animations:^{
+        self.frame = CGRectOffset(self.frame, 0, self.frame.size.height);
+    }];
 }
 
 - (void)setupCancelButton
