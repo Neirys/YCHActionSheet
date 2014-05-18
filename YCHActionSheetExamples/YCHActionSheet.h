@@ -36,7 +36,7 @@
 
 - (instancetype)initWithSections:(NSArray *)sections cancelButtonTitle:(NSString *)cancelButtonTitle delegate:(id)delegate;
 
-- (void)show;
+- (void)showFromView:(UIView *)view;
 
 - (NSInteger)addSection:(YCHActionSheetSection *)section;
 - (YCHActionSheetSection *)sectionAtIndex:(NSInteger)index;

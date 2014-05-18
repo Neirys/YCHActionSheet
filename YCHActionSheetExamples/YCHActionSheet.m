@@ -85,7 +85,7 @@
         _cancelButtonTitle = cancelButtonTitle;
         _delegate = delegate;
         
-        [self createCancelButton];
+        [self setupCancelButton];
     }
     return self;
 }
@@ -118,9 +118,18 @@
     return _mutableSections[index];
 }
 
-- (void)show
+- (void)showFromView:(UIView *)view
 {
+    CGFloat startY = view.frame.origin.y + view.frame.size.height;
+    CGFloat height = [self calculateFrameHeight];
+#warning FIX THIS SHIT
+    self.frame = CGRectMake(view.frame.size.width/2 - 150, startY, 300, height);
     
+    [view addSubview:self];
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        self.frame = CGRectOffset(self.frame, 0, - self.frame.size.height);
+    }];
 }
 
 #warning PUT STATIC SIZE + HANDLE ROTATION
@@ -159,10 +168,10 @@
         offsetY += 44;
     }
     
-    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, 300, offsetY);
+//    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, 300, offsetY);
 }
 
-- (void)createCancelButton
+- (void)setupCancelButton
 {
     if (!self.cancelButtonTitle)
         return;
@@ -175,6 +184,30 @@
     [self.cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
     [self.cancelButton setBackgroundImage:bgNormal forState:UIControlStateNormal];
     [self.cancelButton setBackgroundImage:bgSelected forState:UIControlStateSelected];
+}
+
+#warning REMOVE ALL HARD CODED NUMBER
+- (CGFloat)calculateFrameHeight
+{
+    CGFloat height = 0;
+    for (YCHActionSheetSection *section in _mutableSections)
+    {
+        if (section.title)
+            height += 44;
+        
+        height += (section.buttons.count * 44);
+        
+        // this is for separation
+        height += 10;
+    }
+    
+    // this is for cancel button
+    height += 44;
+    
+    // this is for letting some space
+    height += 10;
+    
+    return height;
 }
 
 @end
@@ -210,8 +243,8 @@
         }
         va_end(args);
         
-        [self createTitleLabel];
-        [self createButtons];
+        [self setupTitleLabel];
+        [self setupButtons];
     }
     return self;
 }
@@ -219,7 +252,7 @@
 - (void)setTitle:(NSString *)title
 {
     _title = title;
-    [self createTitleLabel];
+    [self setupTitleLabel];
 }
 
 - (NSArray *)buttonTitles
@@ -230,7 +263,7 @@
 - (void)setButtonTitles:(NSArray *)buttonTitles
 {
     _mutableButtonTitles = [buttonTitles mutableCopy];
-    [self createButtons];
+    [self setupButtons];
 }
 
 - (NSArray *)buttons
@@ -251,7 +284,7 @@
     return _mutableButtonTitles[index];
 }
 
-- (void)createTitleLabel
+- (void)setupTitleLabel
 {
     if (!self.title)
         return;
@@ -263,7 +296,7 @@
     self.titleLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_50"]];
 }
 
-- (void)createButtons
+- (void)setupButtons
 {
 #warning REFRACTOR THIS 2 LINES
     UIImage *bgNormal = [[UIImage imageNamed:@"bg_50"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];

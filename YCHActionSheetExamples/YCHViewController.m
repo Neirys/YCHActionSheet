@@ -44,9 +44,12 @@
     YCHActionSheetSection *section1 = [[YCHActionSheetSection alloc] initWithTitle:nil otherButtonTitles:@"S1B1", @"S1B2", nil];
     YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Section 2" otherButtonTitles:@"S2B1", @"S2B2", @"S2B3", nil];
     YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2] cancelButtonTitle:@"Cancel" delegate:nil];
-    actionSheet.frame = CGRectMake(10, 50, 100, 100);
+    [actionSheet showFromView:self.view];
     
-    [self.view addSubview:actionSheet];
+//    actionSheet.frame = CGRectMake(10, 50, 100, 100);
+//    actionSheet.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    
+//    [self.view addSubview:actionSheet];
 }
 
 - (void)buttonClicked:(id)sender
