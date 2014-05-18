@@ -17,26 +17,17 @@
 #import "YCHActionSheet.h"
 
 /**
- *  YCHButton class
+ * YCHButton class
  */
 
 @interface YCHButton : UIButton
+
+@property (assign, nonatomic) NSUInteger sectionIndex;
+@property (assign, nonatomic) NSUInteger buttonIndex;
+
 @end
 
 @implementation YCHButton
-
-//- (void)drawRect:(CGRect)rect
-//{
-//    [super drawRect:rect];
-//    
-//    CGContextRef context = UIGraphicsGetCurrentContext();
-//    CGContextSetStrokeColorWithColor(context, [UIColor blackColor].CGColor);
-//    CGContextSetLineWidth(context, 1.0);
-//    CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + rect.size.height);
-//    CGContextAddLineToPoint(context, rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
-//    CGContextStrokePath(context);
-//}
-
 @end
 
 /**
@@ -137,8 +128,10 @@
 {
     CGFloat offsetY = 0;
     
-    for (YCHActionSheetSection *section in self.sections)
+    for (int i = 0; i < self.sections.count; i++)
     {
+        YCHActionSheetSection *section = self.sections[i];
+        
         // 1°) display title
         UILabel *titleLabel = section.titleLabel;
         if (titleLabel)
@@ -150,9 +143,15 @@
         
         // 2°) display buttons
         NSArray *buttons = section.buttons;
-        for (UIButton *button in buttons)
+        for (int j = 0; j < buttons.count; j++)
         {
+            YCHButton *button = buttons[j];
+            
             button.frame = CGRectMake(0, offsetY, 300, 44);
+            button.sectionIndex = i;
+            button.buttonIndex = j;
+#warning DUNNO IF ITS A GOOD PLACE FOR THIS I.E WHAT HAPPEND WHEN layoutSubviews GET CALLED MULTIPLE TIMES (orientation, etc)
+            [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
             [self addSubview:button];
             offsetY += 44;
         }
@@ -167,8 +166,12 @@
         [self addSubview:self.cancelButton];
         offsetY += 44;
     }
-    
-//    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, 300, offsetY);
+}
+
+- (void)buttonWasTouched:(id)sender
+{
+    YCHButton *button = (YCHButton *)sender;
+    NSLog(@"%@ / %@", @(button.sectionIndex), @(button.buttonIndex));
 }
 
 - (void)setupCancelButton
