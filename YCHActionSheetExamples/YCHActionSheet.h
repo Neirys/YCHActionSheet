@@ -14,7 +14,7 @@
 
 @class YCHActionSheetSection, YCHActionSheet;
 
-@protocol YCHActionSheetDelegate <UIActionSheetDelegate>
+@protocol YCHActionSheetDelegate <NSObject>
 
 @optional
 - (void)actionSheet:(YCHActionSheet *)actionSheet clickedButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex;
