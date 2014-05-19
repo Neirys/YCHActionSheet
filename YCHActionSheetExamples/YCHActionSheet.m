@@ -23,12 +23,6 @@
 
 @implementation YCHButton
 
-- (void)setShowBottomLine:(BOOL)showBottomLine
-{
-    _showBottomLine = showBottomLine;
-    [self setNeedsDisplay];
-}
-
 - (void)drawRect:(CGRect)rect
 {
     [super drawRect:rect];
@@ -42,6 +36,19 @@
     CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + rect.size.height);
     CGContextAddLineToPoint(context, rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
     CGContextStrokePath(context);
+}
+
+- (void)setShowBottomLine:(BOOL)showBottomLine
+{
+    _showBottomLine = showBottomLine;
+    [self setNeedsDisplay];
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+    
+//    self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
 }
 
 @end
@@ -144,8 +151,8 @@
     
     [view insertSubview:self.backgroundLayerView belowSubview:self];
     
-    
-    [UIView animateWithDuration:0.5 animations:^{
+#warning NO HARD CODED VALUE
+    [UIView animateWithDuration:0.3 animations:^{
         self.frame = CGRectOffset(self.frame, 0, - self.frame.size.height);
         
 #warning VARIABLE HERE
@@ -228,7 +235,8 @@
 
 - (void)dismiss
 {
-    [UIView animateWithDuration:0.5 animations:^{
+#warning NO HARD CODED VALUE
+    [UIView animateWithDuration:0.3 animations:^{
         self.frame = CGRectOffset(self.frame, 0, self.frame.size.height);
         self.backgroundLayerView.alpha = 0.0;
     } completion:^(BOOL finished) {
