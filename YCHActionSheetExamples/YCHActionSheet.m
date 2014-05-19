@@ -17,9 +17,33 @@
 @property (assign, nonatomic) NSUInteger sectionIndex;
 @property (assign, nonatomic) NSUInteger buttonIndex;
 
+@property (assign, nonatomic) BOOL showBottomLine;
+
 @end
 
 @implementation YCHButton
+
+- (void)setShowBottomLine:(BOOL)showBottomLine
+{
+    _showBottomLine = showBottomLine;
+    [self setNeedsDisplay];
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    [super drawRect:rect];
+    
+    if (!self.showBottomLine)
+        return;
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
+    CGContextSetLineWidth(context, 1.0);
+    CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + rect.size.height);
+    CGContextAddLineToPoint(context, rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
+    CGContextStrokePath(context);
+}
+
 @end
 
 /**
@@ -36,8 +60,8 @@
     [super drawRect:rect];
     
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetStrokeColorWithColor(context, [UIColor blackColor].CGColor);
-    CGContextSetLineWidth(context, 2.0);
+    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
+    CGContextSetLineWidth(context, 1.0);
     CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + rect.size.height);
     CGContextAddLineToPoint(context, rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
     CGContextStrokePath(context);
@@ -171,7 +195,6 @@
         self.cancelButton.frame = CGRectMake(0, offsetY, 300, 44);
         [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.cancelButton];
-        offsetY += 44;
     }
 }
 
@@ -216,18 +239,13 @@
 {
     if (!self.cancelButtonTitle)
         return;
-    
-#warning REFRACTOR THESE LINES
-    UIImage *bgNormal = [[UIImage imageNamed:@"bg_50"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
-    UIImage *bgSelected = [[UIImage imageNamed:@"bg_50_selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
-    
+
     NSString *cancelTitle = self.cancelButtonTitle ?: @"Cancel";
     self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [self.cancelButton setBackgroundColor:[UIColor whiteColor]];
     NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:cancelTitle
                                                                      attributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:21.0]}];
     [self.cancelButton setAttributedTitle:attributed forState:UIControlStateNormal];
-    [self.cancelButton setBackgroundImage:bgNormal forState:UIControlStateNormal];
-    [self.cancelButton setBackgroundImage:bgSelected forState:UIControlStateSelected];
 }
 
 #warning REMOVE ALL HARD CODED NUMBER
@@ -337,37 +355,23 @@
     self.titleLabel.textColor = [UIColor grayColor];
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
 #warning BETTER WAY ?
-    self.titleLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_50"]];
+    self.titleLabel.backgroundColor = [UIColor whiteColor];
 }
 
 - (void)setupButtons
 {
-#warning REFRACTOR THIS 2 LINES
-    UIImage *bgNormal = [[UIImage imageNamed:@"bg_50"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
-    UIImage *bgSelected = [[UIImage imageNamed:@"bg_50_selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
-    UIImage *bgNormalLine = [[UIImage imageNamed:@"bg_50_l"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
-    UIImage *bgSelectedLine = [[UIImage imageNamed:@"bg_50_selected_l"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
-    
     _mutableButtons = [NSMutableArray array];
     for (NSString *buttonTitle in _mutableButtonTitles)
     {
 #warning REFRACTOR BUTTON FACTORY
         YCHButton *button = [YCHButton buttonWithType:UIButtonTypeSystem];
+        button.showBottomLine = buttonTitle != _mutableButtonTitles.lastObject;
+        
         NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:buttonTitle
                                                                          attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:21.0]}];
         [button setAttributedTitle:attributed forState:UIControlStateNormal];
+        [button setBackgroundColor:[UIColor whiteColor]];
         
-        if (buttonTitle == _mutableButtonTitles.lastObject)
-        {
-            [button setBackgroundImage:bgNormal forState:UIControlStateNormal];
-            [button setBackgroundImage:bgSelected forState:UIControlStateSelected];
-        }
-        else
-        {
-            [button setBackgroundImage:bgNormalLine forState:UIControlStateNormal];
-            [button setBackgroundImage:bgSelectedLine forState:UIControlStateSelected];
-        }
-
         [_mutableButtons addObject:button];
     }
 }
