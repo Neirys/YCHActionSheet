@@ -208,6 +208,7 @@
         self.backgroundLayerView.alpha = 0.0;
     } completion:^(BOOL finished) {
         [self.backgroundLayerView removeFromSuperview];
+        [self removeFromSuperview];
     }];
 }
 
@@ -328,7 +329,9 @@
         return;
     
     self.titleLabel = [[YCHLabel alloc] init];
+    self.titleLabel.font = [UIFont systemFontOfSize:13.0];
     self.titleLabel.text = self.title;
+    self.titleLabel.textColor = [UIColor grayColor];
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
 #warning BETTER WAY ?
     self.titleLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_50"]];
@@ -347,7 +350,9 @@
     {
 #warning REFRACTOR BUTTON FACTORY
         YCHButton *button = [YCHButton buttonWithType:UIButtonTypeSystem];
-        [button setTitle:buttonTitle forState:UIControlStateNormal];
+        NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:buttonTitle
+                                                                         attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:21.0]}];
+        [button setAttributedTitle:attributed forState:UIControlStateNormal];
         
         if (buttonTitle == _mutableButtonTitles.lastObject)
         {
