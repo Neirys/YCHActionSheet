@@ -221,8 +221,11 @@
     UIImage *bgNormal = [[UIImage imageNamed:@"bg_50"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
     UIImage *bgSelected = [[UIImage imageNamed:@"bg_50_selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(2, 2, 2, 2)];
     
+    NSString *cancelTitle = self.cancelButtonTitle ?: @"Cancel";
     self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [self.cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
+    NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:cancelTitle
+                                                                     attributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:21.0]}];
+    [self.cancelButton setAttributedTitle:attributed forState:UIControlStateNormal];
     [self.cancelButton setBackgroundImage:bgNormal forState:UIControlStateNormal];
     [self.cancelButton setBackgroundImage:bgSelected forState:UIControlStateSelected];
 }
