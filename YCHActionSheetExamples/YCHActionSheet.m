@@ -63,6 +63,7 @@
 }
 
 @property (strong, nonatomic, readwrite) UIButton *cancelButton;
+@property (strong, nonatomic) UIView *backgroundLayerView;
 
 @end
 
@@ -118,8 +119,20 @@
     
     [view addSubview:self];
     
+#warning REFRACTOR THIS
+    self.backgroundLayerView = [[UIView alloc] initWithFrame:view.bounds];
+    self.backgroundLayerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    self.backgroundLayerView.backgroundColor = [UIColor blackColor];
+    self.backgroundLayerView.opaque = YES;
+    self.backgroundLayerView.alpha = 0;
+    [view insertSubview:self.backgroundLayerView belowSubview:self];
+    
+    
     [UIView animateWithDuration:0.5 animations:^{
         self.frame = CGRectOffset(self.frame, 0, - self.frame.size.height);
+        
+#warning VARIABLE HERE
+        self.backgroundLayerView.alpha = 0.6;
     }];
 }
 
@@ -192,6 +205,9 @@
 {
     [UIView animateWithDuration:0.5 animations:^{
         self.frame = CGRectOffset(self.frame, 0, self.frame.size.height);
+        self.backgroundLayerView.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        [self.backgroundLayerView removeFromSuperview];
     }];
 }
 

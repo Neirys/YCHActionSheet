@@ -42,11 +42,10 @@
 //    [button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:button];
     
-    YCHActionSheetSection *section1 = [[YCHActionSheetSection alloc] initWithTitle:nil otherButtonTitles:@"S1B1", @"S1B2", nil];
-    YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Section 2" otherButtonTitles:@"S2B1", @"S2B2", @"S2B3", nil];
-    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2] cancelButtonTitle:@"Cancel" delegate:nil];
-    actionSheet.delegate = self;
-    [actionSheet showFromView:self.view];
+//    YCHActionSheetSection *section1 = [[YCHActionSheetSection alloc] initWithTitle:nil otherButtonTitles:@"S1B1", @"S1B2", nil];
+//    YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Section 2" otherButtonTitles:@"S2B1", @"S2B2", @"S2B3", nil];
+//    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2] cancelButtonTitle:@"Cancel" delegate:nil];
+//    actionSheet.delegate = self;
     
 //    actionSheet.frame = CGRectMake(10, 50, 100, 100);
 //    actionSheet.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
@@ -77,11 +76,18 @@
 
 - (IBAction)displayActionSheet:(id)sender
 {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Test" delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete" otherButtonTitles:@"Hello", @"Button", nil];
-    actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Test" delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete" otherButtonTitles:@"Hello", @"Button", nil];
+//    actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
 //    [actionSheet showFromBarButtonItem:self.barButton animated:YES];
-    [actionSheet showInView:self.view];
+//    [actionSheet showInView:self.view];
 //    [actionSheet showFromToolbar:self.toolbar];
+    
+    YCHActionSheetSection *section1 = [[YCHActionSheetSection alloc] initWithTitle:nil otherButtonTitles:@"S1B1", @"S1B2", nil];
+    YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Section 2" otherButtonTitles:@"S2B1", @"S2B2", @"S2B3", nil];
+    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2] cancelButtonTitle:@"Cancel" delegate:nil];
+    actionSheet.delegate = self;
+    
+    [actionSheet showFromView:self.view];
 }
 
 @end
