@@ -154,9 +154,19 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
     self.backgroundLayerView.frame = view.bounds;
     [view insertSubview:self.backgroundLayerView belowSubview:self];
     
+    if ([self.delegate respondsToSelector:@selector(willPresentActionSheet:)])
+    {
+        [self.delegate willPresentActionSheet:self];
+    }
+    
     [UIView animateWithDuration:kYCHActionSheetAnimationDuration animations:^{
         self.frame = CGRectOffset(self.frame, 0, - self.frame.size.height);
         self.backgroundLayerView.alpha = kYCHActionSheetBackgroundLayerAlpha;
+    } completion:^(BOOL finished) {
+        if ([self.delegate respondsToSelector:@selector(didPresentActionSheet:)])
+        {
+            [self.delegate didPresentActionSheet:self];
+        }
     }];
 }
 
@@ -189,9 +199,7 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
             button.buttonIndex = j;
 #warning DUNNO IF ITS A GOOD PLACE FOR THIS I.E WHAT HAPPEND WHEN layoutSubviews GET CALLED MULTIPLE TIMES (orientation, etc)
             [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
-            
-            NSLog(@"%@", button.allTargets);
-            
+
             [self addSubview:button];
             offsetY += 44;
         }
@@ -237,12 +245,22 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
 
 - (void)dismiss
 {
+    if ([self.delegate respondsToSelector:@selector(willDismissActionSheet:)])
+    {
+        [self.delegate willDismissActionSheet:self];
+    }
+    
     [UIView animateWithDuration:kYCHActionSheetAnimationDuration animations:^{
         self.frame = CGRectOffset(self.frame, 0, self.frame.size.height);
         self.backgroundLayerView.alpha = 0.0;
     } completion:^(BOOL finished) {
         [self.backgroundLayerView removeFromSuperview];
         [self removeFromSuperview];
+        
+        if ([self.delegate respondsToSelector:@selector(didDismissActionSheet:)])
+        {
+            [self.delegate didDismissActionSheet:self];
+        }
     }];
 }
 

@@ -20,6 +20,12 @@
 - (void)actionSheet:(YCHActionSheet *)actionSheet clickedButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex;
 - (void)actionSheetDidCancel:(YCHActionSheet *)actionSheet;
 
+- (void)willPresentActionSheet:(YCHActionSheet *)actionSheet;
+- (void)didPresentActionSheet:(YCHActionSheet *)actionSheet;
+
+- (void)willDismissActionSheet:(YCHActionSheet *)actionSheet;
+- (void)didDismissActionSheet:(YCHActionSheet *)actionSheet;
+
 @end
 
 /**

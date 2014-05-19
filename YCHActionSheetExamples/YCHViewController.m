@@ -63,6 +63,26 @@
     NSLog(@"cancel");
 }
 
+- (void)willPresentActionSheet:(YCHActionSheet *)actionSheet
+{
+    NSLog(@"will present");
+}
+
+- (void)didPresentActionSheet:(YCHActionSheet *)actionSheet
+{
+    NSLog(@"did present");
+}
+
+- (void)willDismissActionSheet:(YCHActionSheet *)actionSheet
+{
+    NSLog(@"will dismiss");
+}
+
+- (void)didDismissActionSheet:(YCHActionSheet *)actionSheet
+{
+    NSLog(@"did dismiss");
+}
+
 - (void)buttonClicked:(id)sender
 {
     NSLog(@"click");
