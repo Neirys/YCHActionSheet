@@ -25,6 +25,12 @@
                                             <action selector="displayActionSheet:" destination="vXZ-lx-hvc" id="KQd-JI-lb2"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="xi1-On-1vP"/>
+                                    <barButtonItem title="UI AS" id="2fG-yJ-1mF">
+                                        <connections>
+                                            <action selector="uias:" destination="vXZ-lx-hvc" id="kmH-9L-1Nv"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                         </subviews>

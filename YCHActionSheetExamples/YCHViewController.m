@@ -74,14 +74,16 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)uias:(id)sender
+{
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Test" delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete" otherButtonTitles:@"Hello", @"Button", nil];
+    actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    [actionSheet showInView:self.view];
+
+}
+
 - (IBAction)displayActionSheet:(id)sender
 {
-//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Test" delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete" otherButtonTitles:@"Hello", @"Button", nil];
-//    actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
-//    [actionSheet showFromBarButtonItem:self.barButton animated:YES];
-//    [actionSheet showInView:self.view];
-//    [actionSheet showFromToolbar:self.toolbar];
-    
     YCHActionSheetSection *section1 = [[YCHActionSheetSection alloc] initWithTitle:nil otherButtonTitles:@"S1B1", @"S1B2", nil];
     YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Section 2" otherButtonTitles:@"S2B1", @"S2B2", @"S2B3", nil];
     YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2] cancelButtonTitle:@"Cancel" delegate:nil];

@@ -6,14 +6,6 @@
 //  Copyright (c) 2014 Yaman JAIOUCH. All rights reserved.
 //
 
-#define CHECK_OUT_OF_BOUNDS(obj, idx, r, f, ...) \
-{ \
-    if (idx >= obj.count) \
-    { \
-        [NSException raise:r format:f, __VA_ARGS__]; \
-    } \
-}
-
 #import "YCHActionSheet.h"
 
 /**
@@ -105,8 +97,6 @@
 
 - (YCHActionSheetSection *)sectionAtIndex:(NSInteger)index
 {
-    CHECK_OUT_OF_BOUNDS(_mutableSections, index, @"YCHActionSheetSection error", @"*** -[%@ %@]: index %ld out of bounds", NSStringFromClass(self.class), NSStringFromSelector(@selector(sectionAtIndex:)), (long)index);
-    
     return _mutableSections[index];
 }
 
@@ -319,8 +309,6 @@
 
 - (NSString *)buttonAtIndex:(NSInteger)index
 {
-    CHECK_OUT_OF_BOUNDS(_mutableButtonTitles, index, @"YCHActionSheetSection error", @"*** -[%@ %@]: index %ld out of bounds", NSStringFromClass(self.class), NSStringFromSelector(@selector(buttonTitleAtIndex:)), (long)index);
-    
     return _mutableButtonTitles[index];
 }
 
