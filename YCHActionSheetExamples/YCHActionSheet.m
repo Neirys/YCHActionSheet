@@ -205,6 +205,8 @@
     {
         [self.delegate actionSheet:self clickedButtonAtIndex:button.buttonIndex sectionIndex:button.sectionIndex];
     }
+    
+    [self dismiss];
 }
 
 - (void)cancelButtonWasTouched:(id)sender
