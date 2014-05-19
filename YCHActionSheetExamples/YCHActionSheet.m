@@ -115,6 +115,9 @@
     self.backgroundLayerView.backgroundColor = [UIColor blackColor];
     self.backgroundLayerView.opaque = YES;
     self.backgroundLayerView.alpha = 0;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundLayerWasTouched:)];
+    [self.backgroundLayerView addGestureRecognizer:tap];
+    
     [view insertSubview:self.backgroundLayerView belowSubview:self];
     
     
@@ -187,6 +190,13 @@
     {
         [self.delegate actionSheetDidCancel:self];
     }
+    
+    [self dismiss];
+}
+
+- (void)backgroundLayerWasTouched:(UIGestureRecognizer *)gesture
+{
+#warning SHOULD CALL didCancel DELEGATE ? OR SIMPLY WILL/DID DISMISS ?
     
     [self dismiss];
 }
