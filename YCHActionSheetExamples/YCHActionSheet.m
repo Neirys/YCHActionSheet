@@ -8,6 +8,9 @@
 
 #import "YCHActionSheet.h"
 
+static CGFloat kYCHActionSheetButtonHeight              =   44.0;
+static CGFloat kYCHActionSheetInterItemSpace            =   10.0;
+
 static NSTimeInterval kYCHActionSheetAnimationDuration  =   0.3;
 static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
 
@@ -79,6 +82,7 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
 @interface YCHActionSheet ()
 {
     NSMutableArray *_mutableSections;
+    CGFloat _buttonWidth;
 }
 
 @property (strong, nonatomic, readwrite) UIButton *cancelButton;
@@ -145,10 +149,11 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
 
 - (void)showFromView:(UIView *)view
 {
+    _buttonWidth = view.frame.size.width - 20;
+    
     CGFloat startY = view.frame.origin.y + view.frame.size.height;
     CGFloat height = [self calculateFrameHeight];
-    CGFloat width = view.frame.size.width - 20;
-    self.frame = CGRectMake(view.frame.size.width/2 - width/2, startY, width, height);
+    self.frame = CGRectMake(view.frame.size.width/2 - _buttonWidth/2, startY, _buttonWidth, height);
     [view addSubview:self];
     
     self.backgroundLayerView.frame = view.bounds;
@@ -170,7 +175,7 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
     }];
 }
 
-#warning PUT STATIC SIZE + HANDLE ROTATION
+#warning HANDLE ROTATION
 - (void)setupUI
 {
     CGFloat offsetY = 0;
@@ -183,9 +188,9 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
         UILabel *titleLabel = section.titleLabel;
         if (titleLabel)
         {
-            titleLabel.frame = CGRectMake(0, offsetY, 300, 44);
+            titleLabel.frame = CGRectMake(0, offsetY, _buttonWidth, kYCHActionSheetButtonHeight);
             [self addSubview:titleLabel];
-            offsetY += 44;
+            offsetY += kYCHActionSheetButtonHeight;
         }
         
         // 2°) display buttons
@@ -194,23 +199,24 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
         {
             YCHButton *button = buttons[j];
             
-            button.frame = CGRectMake(0, offsetY, 300, 44);
+            button.frame = CGRectMake(0, offsetY, _buttonWidth, kYCHActionSheetButtonHeight);
             button.sectionIndex = i;
             button.buttonIndex = j;
 #warning DUNNO IF ITS A GOOD PLACE FOR THIS I.E WHAT HAPPEND WHEN layoutSubviews GET CALLED MULTIPLE TIMES (orientation, etc)
             [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
 
             [self addSubview:button];
-            offsetY += 44;
+            offsetY += kYCHActionSheetButtonHeight;
         }
         
-        offsetY += 10;
+        offsetY += kYCHActionSheetInterItemSpace;
     }
     
     // 3°) display cancel
     if (self.cancelButton)
     {
-        self.cancelButton.frame = CGRectMake(0, offsetY, 300, 44);
+        self.cancelButton.frame = CGRectMake(0, offsetY, _buttonWidth, kYCHActionSheetButtonHeight);
+#warning SAME WARNING AS ABOVE
         [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.cancelButton];
     }
@@ -239,7 +245,6 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
 
 - (void)backgroundLayerWasTouched:(UIGestureRecognizer *)gesture
 {
-#warning SHOULD CALL didCancel DELEGATE ? OR SIMPLY WILL/DID DISMISS ?
     [self dismiss];
 }
 
@@ -277,26 +282,25 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
     [self.cancelButton setAttributedTitle:attributed forState:UIControlStateNormal];
 }
 
-#warning REMOVE ALL HARD CODED NUMBER
 - (CGFloat)calculateFrameHeight
 {
     CGFloat height = 0;
     for (YCHActionSheetSection *section in _mutableSections)
     {
         if (section.title)
-            height += 44;
+            height += kYCHActionSheetButtonHeight;
         
-        height += (section.buttons.count * 44);
+        height += (section.buttons.count * kYCHActionSheetButtonHeight);
         
         // this is for separation
-        height += 10;
+        height += kYCHActionSheetInterItemSpace;
     }
     
     // this is for cancel button
-    height += 44;
+    height += kYCHActionSheetButtonHeight;
     
     // this is for letting some space
-    height += 10;
+    height += kYCHActionSheetInterItemSpace;
     
     return height;
 }
