@@ -8,6 +8,9 @@
 
 #import "YCHActionSheet.h"
 
+static NSTimeInterval kYCHActionSheetAnimationDuration  =   0.3;
+static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
+
 /**
  * YCHButton class
  */
@@ -42,13 +45,6 @@
 {
     _showBottomLine = showBottomLine;
     [self setNeedsDisplay];
-}
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    [super touchesBegan:touches withEvent:event];
-    
-//    self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
 }
 
 @end
@@ -120,6 +116,22 @@
     _mutableSections = [sections mutableCopy];
 }
 
+- (UIView *)backgroundLayerView
+{
+    if (_backgroundLayerView)
+        return _backgroundLayerView;
+    
+    _backgroundLayerView = [[UIView alloc] init];
+    _backgroundLayerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    _backgroundLayerView.backgroundColor = [UIColor blackColor];
+    _backgroundLayerView.opaque = YES;
+    _backgroundLayerView.alpha = 0;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundLayerWasTouched:)];
+    [_backgroundLayerView addGestureRecognizer:tap];
+    
+    return _backgroundLayerView;
+}
+
 - (NSInteger)addSection:(YCHActionSheetSection *)section
 {
     [_mutableSections addObject:section];
@@ -135,28 +147,16 @@
 {
     CGFloat startY = view.frame.origin.y + view.frame.size.height;
     CGFloat height = [self calculateFrameHeight];
-#warning FIX THIS SHIT
-    self.frame = CGRectMake(view.frame.size.width/2 - 150, startY, 300, height);
-    
+    CGFloat width = view.frame.size.width - 20;
+    self.frame = CGRectMake(view.frame.size.width/2 - width/2, startY, width, height);
     [view addSubview:self];
     
-#warning REFRACTOR THIS
-    self.backgroundLayerView = [[UIView alloc] initWithFrame:view.bounds];
-    self.backgroundLayerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    self.backgroundLayerView.backgroundColor = [UIColor blackColor];
-    self.backgroundLayerView.opaque = YES;
-    self.backgroundLayerView.alpha = 0;
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundLayerWasTouched:)];
-    [self.backgroundLayerView addGestureRecognizer:tap];
-    
+    self.backgroundLayerView.frame = view.bounds;
     [view insertSubview:self.backgroundLayerView belowSubview:self];
     
-#warning NO HARD CODED VALUE
-    [UIView animateWithDuration:0.3 animations:^{
+    [UIView animateWithDuration:kYCHActionSheetAnimationDuration animations:^{
         self.frame = CGRectOffset(self.frame, 0, - self.frame.size.height);
-        
-#warning VARIABLE HERE
-        self.backgroundLayerView.alpha = 0.6;
+        self.backgroundLayerView.alpha = kYCHActionSheetBackgroundLayerAlpha;
     }];
 }
 
@@ -189,6 +189,9 @@
             button.buttonIndex = j;
 #warning DUNNO IF ITS A GOOD PLACE FOR THIS I.E WHAT HAPPEND WHEN layoutSubviews GET CALLED MULTIPLE TIMES (orientation, etc)
             [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
+            
+            NSLog(@"%@", button.allTargets);
+            
             [self addSubview:button];
             offsetY += 44;
         }
@@ -229,14 +232,12 @@
 - (void)backgroundLayerWasTouched:(UIGestureRecognizer *)gesture
 {
 #warning SHOULD CALL didCancel DELEGATE ? OR SIMPLY WILL/DID DISMISS ?
-    
     [self dismiss];
 }
 
 - (void)dismiss
 {
-#warning NO HARD CODED VALUE
-    [UIView animateWithDuration:0.3 animations:^{
+    [UIView animateWithDuration:kYCHActionSheetAnimationDuration animations:^{
         self.frame = CGRectOffset(self.frame, 0, self.frame.size.height);
         self.backgroundLayerView.alpha = 0.0;
     } completion:^(BOOL finished) {
@@ -364,7 +365,6 @@
     self.titleLabel.text = self.title;
     self.titleLabel.textColor = [UIColor grayColor];
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
-#warning BETTER WAY ?
     self.titleLabel.backgroundColor = [UIColor whiteColor];
 }
 
@@ -373,10 +373,9 @@
     _mutableButtons = [NSMutableArray array];
     for (NSString *buttonTitle in _mutableButtonTitles)
     {
-#warning REFRACTOR BUTTON FACTORY
         YCHButton *button = [YCHButton buttonWithType:UIButtonTypeSystem];
         button.showBottomLine = buttonTitle != _mutableButtonTitles.lastObject;
-        
+
         NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:buttonTitle
                                                                          attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:21.0]}];
         [button setAttributedTitle:attributed forState:UIControlStateNormal];
