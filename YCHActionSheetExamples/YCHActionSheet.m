@@ -99,7 +99,6 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
     if (self = [super init])
     {
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-        self.backgroundColor = [UIColor redColor];
     }
     return self;
 }
@@ -162,11 +161,11 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 - (void)showFromView:(UIView *)view
 {
     self.presentingView = view;
-    CGFloat width = view.frame.size.width - kYCHActionSheetHorizontalSpace;
+    CGFloat width = [self widthForView:view] - kYCHActionSheetHorizontalSpace;
     
-    CGFloat startY = view.frame.origin.y + view.frame.size.height;
+    CGFloat startY = view.frame.origin.y + [self heightForView:view];
     CGFloat height = [self calculateFrameHeight];
-    self.frame = CGRectMake(view.frame.size.width/2 - width/2, startY, width, height);
+    self.frame = CGRectMake([self widthForView:view]/2 - width/2, startY, width, height);
     [view addSubview:self];
     
     self.backgroundLayerView.frame = view.bounds;
@@ -188,7 +187,6 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
     }];
 }
 
-#warning HANDLE ROTATION
 - (void)setupUI
 {
     CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
@@ -321,6 +319,12 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 {
     UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     return (UIInterfaceOrientationIsPortrait(orientation) ? view.frame.size.width : view.frame.size.height);
+}
+
+- (CGFloat)heightForView:(UIView *)view
+{
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    return (UIInterfaceOrientationIsPortrait(orientation) ? view.frame.size.height : view.frame.size.width);
 }
 
 @end
