@@ -241,15 +241,45 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
         [self.delegate willPresentActionSheet:self];
     }
     
-    [UIView animateWithDuration:kYCHActionSheetAnimationDuration animations:^{
+    void (^animation)(void) = ^{
         self.frame = CGRectOffset(self.frame, 0, - self.frame.size.height);
         self.backgroundLayerView.alpha = kYCHActionSheetBackgroundLayerAlpha;
-    } completion:^(BOOL finished) {
+    };
+    
+    void (^completion)(BOOL finished) = ^(BOOL finished) {
         if ([self.delegate respondsToSelector:@selector(didPresentActionSheet:)])
         {
             [self.delegate didPresentActionSheet:self];
         }
-    }];
+    };
+    
+    [UIView animateWithDuration:kYCHActionSheetAnimationDuration animations:animation completion:completion];
+}
+
+- (void)dismiss
+{
+    if ([self.delegate respondsToSelector:@selector(willDismissActionSheet:)])
+    {
+        [self.delegate willDismissActionSheet:self];
+    }
+    
+    void (^animation)(void) = ^{
+        self.frame = CGRectOffset(self.frame, 0, self.frame.size.height);
+        self.backgroundLayerView.alpha = 0.0;
+    };
+    
+    void (^completion)(BOOL finished) = ^(BOOL finished) {
+        self.visible = NO;
+        [self.backgroundLayerView removeFromSuperview];
+        [self removeFromSuperview];
+        
+        if ([self.delegate respondsToSelector:@selector(didDismissActionSheet:)])
+        {
+            [self.delegate didDismissActionSheet:self];
+        }
+    };
+    
+    [UIView animateWithDuration:kYCHActionSheetAnimationDuration animations:animation completion:completion];
 }
 
 - (void)setupUI
@@ -338,28 +368,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 - (void)backgroundLayerWasTouched:(UIGestureRecognizer *)gesture
 {
     [self dismiss];
-}
-
-- (void)dismiss
-{
-    if ([self.delegate respondsToSelector:@selector(willDismissActionSheet:)])
-    {
-        [self.delegate willDismissActionSheet:self];
-    }
-    
-    [UIView animateWithDuration:kYCHActionSheetAnimationDuration animations:^{
-        self.frame = CGRectOffset(self.frame, 0, self.frame.size.height);
-        self.backgroundLayerView.alpha = 0.0;
-    } completion:^(BOOL finished) {
-        self.visible = NO;
-        [self.backgroundLayerView removeFromSuperview];
-        [self removeFromSuperview];
-        
-        if ([self.delegate respondsToSelector:@selector(didDismissActionSheet:)])
-        {
-            [self.delegate didDismissActionSheet:self];
-        }
-    }];
 }
 
 - (void)setupCancelButton
