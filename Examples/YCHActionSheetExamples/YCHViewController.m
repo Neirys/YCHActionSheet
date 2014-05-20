@@ -76,7 +76,7 @@
                                                                  otherButtonTitles:@"90°", @"-90°", nil];
     YCHActionSheetSection *section4 = [[YCHActionSheetSection alloc] initWithTitle:@"Blur"
                                                                  otherButtonTitles:@"High", @"Medium", @"Low", nil];
-    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3, section4]
+    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3]
                                                          cancelButtonTitle:@"Cancel"
                                                                   delegate:self];
 

@@ -8,6 +8,9 @@
 
 #import "YCHActionSheet.h"
 
+#pragma mark - 
+#pragma mark Static values
+
 #define kYCHActionSheetDefaultBackgroundColor   [UIColor colorWithWhite:0.97 alpha:1.0]
 
 static CGFloat const kYCHActionSheetButtonHeight              =   44.0;
@@ -17,6 +20,9 @@ static CGFloat const kYCHActionSheetHorizontalSpace           =   20.0;
 static NSTimeInterval const kYCHActionSheetAnimationDuration  =   0.5;
 static CGFloat const kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 static CGFloat const kYCHActionSheetItemCornerRadius          =   3.0;
+
+#pragma mark - 
+#pragma mark Functions
 
 /**
  *  Functions
@@ -40,9 +46,11 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     CGContextClip(context);
     CGContextDrawRadialGradient(context, gradient, startCenter, 0, startCenter, rect.size.width * 0.5, 0);
     CGContextRestoreGState(context);
-    
     CGGradientRelease(gradient);
 }
+
+#pragma mark - 
+#pragma mark UIView categories
 
 /**
  *  UIView categories
@@ -89,6 +97,9 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 @end
 
+#pragma mark - 
+#pragma mark YCHButton class
+
 /**
  *  YCHButton class
  */
@@ -123,6 +134,9 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 @end
 
+#pragma mark -
+#pragma mark YCHLabel class
+
 /**
  *  YCHLabel class
  */
@@ -142,6 +156,9 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 @end
 
+#pragma mark -
+#pragma mark YCHActionSheet implementation
+
 /**
  *  YCHActionSheet implementation
  */
@@ -150,8 +167,9 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 {
     NSMutableArray *_mutableSections;
     UIScrollView *_scrollView;
-    BOOL _willBeAnimated;
+    BOOL _willAnimate;
 }
+
 @property (assign, nonatomic, readwrite, getter = isVisible) BOOL visible;
 
 @property (strong, nonatomic, readwrite) UIButton *cancelButton;
@@ -162,6 +180,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 @end
 
 @implementation YCHActionSheet
+
+#pragma mark - Life cycle methods
 
 - (id)init
 {
@@ -193,6 +213,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     [self setupUI];
 }
 
+#pragma mark - Custom getters / setters
+
 - (NSArray *)sections
 {
     return [_mutableSections copy];
@@ -219,6 +241,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     return _backgroundLayerView;
 }
 
+#pragma mark - Public methods
+
 - (NSInteger)addSection:(YCHActionSheetSection *)section
 {
     if (self.isVisible)
@@ -239,17 +263,14 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 - (void)showInView:(UIView *)view
 {
-    _willBeAnimated = YES;
+    _willAnimate = YES;
     self.visible = YES;
     self.presentingView = view;
 
     // setup initial frame
     CGFloat startY = view.bounds.origin.y + [self heightForView:view];
-    CGFloat width = [self widthForView:view] - kYCHActionSheetHorizontalSpace;
-    
-    // self height = scrollView height + cancel button height + 2 space
-    CGFloat height = [self calculateScrollViewFrameSize].height + kYCHActionSheetButtonHeight + kYCHActionSheetInterItemSpace*2;
-    self.frame = CGRectMake([self widthForView:view]/2 - width/2, startY, width, height);
+    CGSize size = [self calculateFrameSize];
+    self.frame = CGRectMake([self widthForView:view]/2 - size.width/2, startY, size.width, size.height);
     [view addSubview:self];
     
     // add an opaque background layer
@@ -267,7 +288,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     };
     
     void (^completion)(BOOL finished) = ^(BOOL finished) {
-        _willBeAnimated = NO;
+        _willAnimate = NO;
         if ([self.delegate respondsToSelector:@selector(didPresentActionSheet:)])
         {
             [self.delegate didPresentActionSheet:self];
@@ -279,7 +300,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 - (void)dismiss
 {
-    _willBeAnimated = YES;
+    _willAnimate = YES;
     
     if ([self.delegate respondsToSelector:@selector(willDismissActionSheet:)])
     {
@@ -292,7 +313,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     };
     
     void (^completion)(BOOL finished) = ^(BOOL finished) {
-        _willBeAnimated = NO;
+        _willAnimate = NO;
         self.visible = NO;
         [self.backgroundLayerView removeFromSuperview];
         [self removeFromSuperview];
@@ -306,6 +327,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     [UIView animateWithDuration:kYCHActionSheetAnimationDuration delay:0.0 usingSpringWithDamping:1 initialSpringVelocity:0 options:0 animations:animation completion:completion];
 }
 
+#pragma mark - Setup UI methods
+
 - (void)setupUI
 {
     // setup scrollView frame and contentSize
@@ -315,7 +338,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     _scrollView.contentSize = svContentSize;
     
     // in case of rotation, fix action sheet frame
-    if (!_willBeAnimated)
+    if (!_willAnimate)
     {
         CGSize frameSize = [self calculateFrameSize];
         CGRect frame = CGRectMake([self widthForView:self.presentingView]/2 - frameSize.width/2,
@@ -326,9 +349,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     }
     
     // setup action sheet view
-    CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
     CGFloat offsetY = 0;
-    
+    CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
     for (int i = 0; i < self.sections.count; i++)
     {
         YCHActionSheetSection *section = self.sections[i];
@@ -383,6 +405,18 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     }
 }
 
+- (void)setupCancelButton
+{
+    NSString *cancelTitle = self.cancelButtonTitle ?: @"Cancel";
+    self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [self.cancelButton setBackgroundColor:kYCHActionSheetDefaultBackgroundColor];
+    NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:cancelTitle
+                                                                     attributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:21.0]}];
+    [self.cancelButton setAttributedTitle:attributed forState:UIControlStateNormal];
+}
+
+#pragma mark - Event handler methods
+
 - (void)buttonWasTouched:(id)sender
 {
     YCHButton *button = (YCHButton *)sender;
@@ -409,15 +443,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     [self dismiss];
 }
 
-- (void)setupCancelButton
-{
-    NSString *cancelTitle = self.cancelButtonTitle ?: @"Cancel";
-    self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [self.cancelButton setBackgroundColor:kYCHActionSheetDefaultBackgroundColor];
-    NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:cancelTitle
-                                                                     attributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:21.0]}];
-    [self.cancelButton setAttributedTitle:attributed forState:UIControlStateNormal];
-}
+#pragma mark - Helper methods
 
 - (CGSize)calculateFrameSize
 {
@@ -446,12 +472,11 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 - (CGSize)calculateScrollViewFrameSize
 {
-    CGFloat width = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
     CGFloat maxHeight = [self heightForView:self.presentingView] - kYCHActionSheetButtonHeight - (5*kYCHActionSheetInterItemSpace);
     CGSize contentSize = [self calculateScrollViewContentSize];
     CGFloat height = MIN(maxHeight, contentSize.height);
     
-    return CGSizeMake(width, height);
+    return CGSizeMake(contentSize.width, height);
 }
 
 - (CGFloat)widthForView:(UIView *)view
@@ -472,6 +497,9 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 @end
 
+#pragma mark - 
+#pragma mark YCHActionSheetSection implementation
+
 /**
  *  YCHActionSheetSection implementation
  */
@@ -490,6 +518,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 @end
 
 @implementation YCHActionSheetSection
+
+#pragma mark - Life cycle methods
 
 - (instancetype)initWithTitle:(NSString *)title destructive:(BOOL)destructive firstButtonTitle:(NSString *)firstButtonTitle otherButtonsTitles:(va_list)otherButtonTitles
 {
@@ -533,6 +563,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     return [[self alloc] initWithTitle:nil destructive:YES otherButtonTitles:title, nil];
 }
 
+#pragma mark - Custom getters / setters
+
 - (void)setTitle:(NSString *)title
 {
     _title = title;
@@ -555,6 +587,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     return [_mutableButtons copy];
 }
 
+#pragma mark - Public methods
+
 - (NSInteger)addButtonWithTitle:(NSString *)title
 {
     if (self.actionSheet.isVisible)
@@ -572,6 +606,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 {
     return _mutableButtonTitles[index];
 }
+
+#pragma mark - Setup UI methods
 
 - (void)setupTitleLabel
 {
