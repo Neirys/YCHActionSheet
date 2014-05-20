@@ -12,7 +12,7 @@ static CGFloat kYCHActionSheetButtonHeight              =   44.0;
 static CGFloat kYCHActionSheetInterItemSpace            =   10.0;
 
 static NSTimeInterval kYCHActionSheetAnimationDuration  =   0.3;
-static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.6;
+static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 
 /**
  * YCHButton class
