@@ -8,6 +8,8 @@
 
 #import "YCHActionSheet.h"
 
+#define kYCHActionSheetDefaultBackgroundColor   [UIColor colorWithWhite:0.97 alpha:1.0]
+
 static CGFloat const kYCHActionSheetButtonHeight              =   44.0;
 static CGFloat const kYCHActionSheetInterItemSpace            =   10.0;
 static CGFloat const kYCHActionSheetHorizontalSpace           =   20.0;
@@ -374,7 +376,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 {
     NSString *cancelTitle = self.cancelButtonTitle ?: @"Cancel";
     self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [self.cancelButton setBackgroundColor:[UIColor whiteColor]];
+    [self.cancelButton setBackgroundColor:kYCHActionSheetDefaultBackgroundColor];
     NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:cancelTitle
                                                                      attributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:21.0]}];
     [self.cancelButton setAttributedTitle:attributed forState:UIControlStateNormal];
@@ -516,7 +518,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
     self.titleLabel.text = self.title;
     self.titleLabel.textColor = [UIColor grayColor];
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
-    self.titleLabel.backgroundColor = [UIColor whiteColor];
+    self.titleLabel.backgroundColor = kYCHActionSheetDefaultBackgroundColor;
 }
 
 - (void)setupButtons
@@ -535,7 +537,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
         }
         
         [button setAttributedTitle:attributed forState:UIControlStateNormal];
-        [button setBackgroundColor:[UIColor whiteColor]];
+        [button setBackgroundColor:kYCHActionSheetDefaultBackgroundColor];
         
         [_mutableButtons addObject:button];
     }
