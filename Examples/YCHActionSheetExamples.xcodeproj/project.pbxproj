@@ -56,7 +56,6 @@
 		F8A70E1519084DC500BA6D50 /* YCHActionSheetExamplesTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "YCHActionSheetExamplesTests-Info.plist"; sourceTree = "<group>"; };
 		F8A70E1719084DC500BA6D50 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F8A70E1919084DC500BA6D50 /* YCHActionSheetExamplesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YCHActionSheetExamplesTests.m; sourceTree = "<group>"; };
-		F8B4FE56190862A8002B604C /* Reveal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Reveal.framework; sourceTree = "<group>"; };
 		F8DA840B192BBCB100FB4CC8 /* YCHActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YCHActionSheet.h; sourceTree = "<group>"; };
 		F8DA840C192BBCB100FB4CC8 /* YCHActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YCHActionSheet.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,7 +87,7 @@
 		F8A70DDF19084DC400BA6D50 = {
 			isa = PBXGroup;
 			children = (
-				F8DA840A192BBCB100FB4CC8 /* Classes */,
+				F8DA840A192BBCB100FB4CC8 /* YCHActionSheet */,
 				F8A70DF119084DC400BA6D50 /* YCHActionSheetExamples */,
 				F8A70E1319084DC500BA6D50 /* YCHActionSheetExamplesTests */,
 				F8A70DEA19084DC400BA6D50 /* Frameworks */,
@@ -108,7 +107,6 @@
 		F8A70DEA19084DC400BA6D50 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F8B4FE56190862A8002B604C /* Reveal.framework */,
 				F8A70DEB19084DC400BA6D50 /* Foundation.framework */,
 				F8A70DED19084DC400BA6D50 /* CoreGraphics.framework */,
 				F8A70DEF19084DC400BA6D50 /* UIKit.framework */,
@@ -161,13 +159,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		F8DA840A192BBCB100FB4CC8 /* Classes */ = {
+		F8DA840A192BBCB100FB4CC8 /* YCHActionSheet */ = {
 			isa = PBXGroup;
 			children = (
 				F8DA840B192BBCB100FB4CC8 /* YCHActionSheet.h */,
 				F8DA840C192BBCB100FB4CC8 /* YCHActionSheet.m */,
 			);
-			path = Classes;
+			name = YCHActionSheet;
+			path = ../YCHActionSheet;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -419,11 +418,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-framework",
-					Reveal,
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
