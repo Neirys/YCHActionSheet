@@ -162,6 +162,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
     if (self = [super init])
     {
         _mutableSections = [sections mutableCopy];
+        [_mutableSections makeObjectsPerformSelector:@selector(setActionSheet:) withObject:self];
         _cancelButtonTitle = cancelButtonTitle;
         _delegate = delegate;
         
@@ -203,12 +204,13 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 
 - (NSInteger)addSection:(YCHActionSheetSection *)section
 {
-    if (self.visible)
+    if (self.isVisible)
     {
         NSLog(@"YCHActionSheet error - You cannot add a section if action sheet is already visible");
         return -1;
     }
     
+    [section performSelector:@selector(setActionSheet:) withObject:self];
     [_mutableSections addObject:section];
     return _mutableSections.count-1;
 }
@@ -403,9 +405,10 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
     NSMutableArray *_mutableButtons;
 }
 
+@property (weak, nonatomic, readwrite) YCHActionSheet *actionSheet;
+
 @property (strong, nonatomic, readwrite) YCHLabel *titleLabel;
 @property (assign, nonatomic, readwrite, getter = isDestructiveSection) BOOL destructiveSection;
-
 
 @end
 
@@ -477,7 +480,14 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 
 - (NSInteger)addButtonWithTitle:(NSString *)title
 {
+    if (self.actionSheet.isVisible)
+    {
+        NSLog(@"YCHActionSheetSection error - You cannot add a button title when action sheet is already visible");
+        return -1;
+    }
+    
     [_mutableButtonTitles addObject:title];
+    [self setupButtons];
     return _mutableButtonTitles.count-1;
 }
 

@@ -58,6 +58,8 @@
 
 @interface YCHActionSheetSection : NSObject
 
+@property (weak, nonatomic, readonly) YCHActionSheet *actionSheet;
+
 @property (copy, nonatomic) NSString *title;
 @property (strong, nonatomic, readonly) UILabel *titleLabel;
 

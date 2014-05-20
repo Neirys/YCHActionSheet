@@ -75,7 +75,13 @@
     YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3] cancelButtonTitle:@"Cancel" delegate:nil];
     actionSheet.delegate = self;
     
+    YCHActionSheetSection *section4 = [YCHActionSheetSection destructiveSectionWithTitle:@"test"];
+
+    
     [actionSheet showFromView:self.view];
+    
+        [actionSheet addSection:section4];
+    [section3 addButtonWithTitle:@"test"];
 }
 
 @end
