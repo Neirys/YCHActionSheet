@@ -43,7 +43,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 }
 
 /**
- * UIView categories
+ *  UIView categories
  */
 
 @interface UIView (YCHRoundedCorner)
@@ -88,7 +88,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 @end
 
 /**
- * YCHButton class
+ *  YCHButton class
  */
 
 @interface YCHButton : UIButton
@@ -122,7 +122,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 @end
 
 /**
- * YCHLabel class
+ *  YCHLabel class
  */
 
 @interface YCHLabel : UILabel
@@ -141,7 +141,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 @end
 
 /**
- * YCHActionSheet implementation
+ *  YCHActionSheet implementation
  */
 
 @interface YCHActionSheet ()
@@ -222,12 +222,12 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
     return _mutableSections[index];
 }
 
-- (void)showFromView:(UIView *)view
+- (void)showInView:(UIView *)view
 {
     self.visible = YES;
     self.presentingView = view;
     
-    CGFloat startY = view.frame.origin.y + view.frame.size.height;
+    CGFloat startY = view.bounds.origin.y + view.frame.size.height;
     CGFloat width = view.frame.size.width - kYCHActionSheetHorizontalSpace;
     CGFloat height = [self calculateFrameHeight];
     self.frame = CGRectMake(view.frame.size.width/2 - width/2, startY, width, height);
@@ -398,7 +398,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 @end
 
 /**
- * YCHActionSheetSection implementation
+ *  YCHActionSheetSection implementation
  */
 
 @interface YCHActionSheetSection ()
@@ -493,7 +493,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
     return _mutableButtonTitles.count-1;
 }
 
-- (NSString *)buttonAtIndex:(NSInteger)index
+- (NSString *)buttonTitleAtIndex:(NSInteger)index
 {
     return _mutableButtonTitles[index];
 }

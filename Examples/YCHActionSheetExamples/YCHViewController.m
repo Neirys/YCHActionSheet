@@ -70,18 +70,13 @@
 - (IBAction)displayActionSheet:(id)sender
 {
     YCHActionSheetSection *section1 = [YCHActionSheetSection destructiveSectionWithTitle:@"Reset"];
-    YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Compression" otherButtonTitles:@"75%", @"50%", @"25%", nil];
-    YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation" otherButtonTitles:@"90°", @"-90°", nil];
-    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3] cancelButtonTitle:@"Cancel" delegate:nil];
-    actionSheet.delegate = self;
-    
-    YCHActionSheetSection *section4 = [YCHActionSheetSection destructiveSectionWithTitle:@"test"];
+    YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Compression"
+                                                                 otherButtonTitles:@"75%", @"50%", @"25%", nil];
+    YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
+                                                                 otherButtonTitles:@"90°", @"-90°", nil];
+    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3] cancelButtonTitle:@"Cancel" delegate:self];
 
-    
-    [actionSheet showFromView:self.view];
-    
-        [actionSheet addSection:section4];
-    [section3 addButtonWithTitle:@"test"];
+    [actionSheet showInView:self.view];
 }
 
 @end
