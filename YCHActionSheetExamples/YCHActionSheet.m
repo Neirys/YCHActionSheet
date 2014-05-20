@@ -191,7 +191,7 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 #warning HANDLE ROTATION
 - (void)setupUI
 {
-    CGFloat buttonWidth = self.presentingView.frame.size.width - kYCHActionSheetHorizontalSpace;
+    CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
     CGFloat offsetY = 0;
     
     for (int i = 0; i < self.sections.count; i++)
@@ -315,6 +315,12 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
     height += kYCHActionSheetInterItemSpace;
     
     return height;
+}
+
+- (CGFloat)widthForView:(UIView *)view
+{
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    return (UIInterfaceOrientationIsPortrait(orientation) ? view.frame.size.width : view.frame.size.height);
 }
 
 @end
