@@ -435,6 +435,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
     va_list args;
     va_start(args, otherButtonTitles);
     self = [self initWithTitle:title destructive:NO firstButtonTitle:otherButtonTitles otherButtonsTitles:args];
+    va_end(args);
     return self;
 }
 
