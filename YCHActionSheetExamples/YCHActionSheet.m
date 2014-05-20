@@ -14,6 +14,52 @@ static CGFloat kYCHActionSheetHorizontalSpace           =   20.0;
 
 static NSTimeInterval kYCHActionSheetAnimationDuration  =   0.3;
 static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
+static CGFloat kYCHActionSheetItemCornerRadius          =   3.0;
+
+/**
+ * UIView categories
+ */
+
+@interface UIView (YCHRoundedCorner)
+
+- (void)roundTopCornersWithRadius:(CGFloat)radius;
+- (void)roundBottomCornersWithRadius:(CGFloat)radius;
+- (void)roundAllCornersWithRadius:(CGFloat)radius;
+
+@end
+
+@implementation UIView (YCHRoundedCorner)
+
+- (CAShapeLayer *)roundedCornerShapeForFrame:(CGRect)frame corners:(UIRectCorner)corners radius:(CGFloat)radius
+{
+    UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:frame byRoundingCorners:corners cornerRadii:CGSizeMake(radius, radius)];
+    CAShapeLayer *shape = [[CAShapeLayer alloc] init];
+    shape.frame = frame;
+    shape.path = path.CGPath;
+    return shape;
+}
+
+- (void)roundCorners:(UIRectCorner)corners radius:(CGFloat)radius
+{
+    self.layer.mask = [self roundedCornerShapeForFrame:self.bounds corners:corners radius:radius];
+}
+
+- (void)roundTopCornersWithRadius:(CGFloat)radius
+{
+    [self roundCorners:(UIRectCornerTopRight | UIRectCornerTopLeft) radius:radius];
+}
+
+- (void)roundBottomCornersWithRadius:(CGFloat)radius
+{
+    [self roundCorners:(UIRectCornerBottomLeft | UIRectCornerBottomRight) radius:radius];
+}
+
+- (void)roundAllCornersWithRadius:(CGFloat)radius
+{
+    [self roundCorners:(UIRectCornerAllCorners) radius:radius];
+}
+
+@end
 
 /**
  * YCHButton class
@@ -178,7 +224,6 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
     }];
 }
 
-#warning HANDLE ROTATION
 - (void)setupUI
 {
     CGFloat buttonWidth = self.presentingView.frame.size.width - kYCHActionSheetHorizontalSpace;
@@ -193,6 +238,7 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
         if (titleLabel)
         {
             titleLabel.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
+            [titleLabel roundTopCornersWithRadius:kYCHActionSheetItemCornerRadius];
             [self addSubview:titleLabel];
             offsetY += kYCHActionSheetButtonHeight;
         }
@@ -207,8 +253,23 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
             button.sectionIndex = i;
             button.buttonIndex = j;
             [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
-
+            
+            
+            if (buttons.count == 1)
+            {
+                [button roundAllCornersWithRadius:kYCHActionSheetItemCornerRadius];
+            }
+            else if (button == buttons.lastObject)
+            {
+                [button roundBottomCornersWithRadius:kYCHActionSheetItemCornerRadius];
+            }
+            else if (button == buttons.firstObject && !titleLabel)
+            {
+                [button roundTopCornersWithRadius:kYCHActionSheetItemCornerRadius];
+            }
+            
             [self addSubview:button];
+            
             offsetY += kYCHActionSheetButtonHeight;
         }
         
@@ -219,6 +280,7 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
     if (self.cancelButton)
     {
         self.cancelButton.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
+        [self.cancelButton roundAllCornersWithRadius:kYCHActionSheetItemCornerRadius];
         [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.cancelButton];
     }

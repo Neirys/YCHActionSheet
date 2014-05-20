@@ -67,12 +67,10 @@
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Test" delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete" otherButtonTitles:@"Hello", @"Button", nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     [actionSheet showInView:self.view];
-
 }
 
 - (IBAction)displayActionSheet:(id)sender
 {
-//    YCHActionSheetSection *section1 = [[YCHActionSheetSection alloc] initWithTitle:nil otherButtonTitles:@"Reset", nil];
     YCHActionSheetSection *section1 = [YCHActionSheetSection destructiveSectionWithTitle:@"Reset"];
     YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Compression" otherButtonTitles:@"75%", @"50%", @"25%", nil];
     YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation" otherButtonTitles:@"90°", @"-90°", nil];
