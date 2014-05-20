@@ -74,7 +74,11 @@
                                                                  otherButtonTitles:@"75%", @"50%", @"25%", nil];
     YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
                                                                  otherButtonTitles:@"90°", @"-90°", nil];
-    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3] cancelButtonTitle:@"Cancel" delegate:self];
+    YCHActionSheetSection *section4 = [[YCHActionSheetSection alloc] initWithTitle:@"Blur"
+                                                                 otherButtonTitles:@"High", @"Medium", @"Low", nil];
+    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3, section4]
+                                                         cancelButtonTitle:@"Cancel"
+                                                                  delegate:self];
 
     [actionSheet showInView:self.view];
 }

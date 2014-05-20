@@ -149,6 +149,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 @interface YCHActionSheet ()
 {
     NSMutableArray *_mutableSections;
+    UIScrollView *_scrollView;
 }
 @property (assign, nonatomic, readwrite, getter = isVisible) BOOL visible;
 
@@ -165,7 +166,11 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 {
     if (self = [super init])
     {
+        self.backgroundColor = [UIColor redColor];
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+        _scrollView = [[UIScrollView alloc] init];
+        _scrollView.backgroundColor = [UIColor greenColor];
+        [self addSubview:_scrollView];
     }
     return self;
 }
@@ -240,7 +245,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
     CGFloat startY = view.bounds.origin.y + [self heightForView:view];
     CGFloat width = [self widthForView:view] - kYCHActionSheetHorizontalSpace;
-    CGFloat height = [self calculateFrameHeight];
+    CGFloat height = [self calculateScrollViewFrameSize].height + kYCHActionSheetButtonHeight + kYCHActionSheetInterItemSpace*2;
     self.frame = CGRectMake([self widthForView:view]/2 - width/2, startY, width, height);
     [view addSubview:self];
     
@@ -295,6 +300,12 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 - (void)setupUI
 {
+    CGSize svContentSize = [self calculateScrollViewContentSize];
+    CGSize svFrame = [self calculateScrollViewFrameSize];
+    
+    _scrollView.frame = CGRectMake(0, 0, svFrame.width, svFrame.height);
+    _scrollView.contentSize = svContentSize;
+    
     CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
     CGFloat offsetY = 0;
     
@@ -308,7 +319,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
         {
             titleLabel.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
             [titleLabel roundTopCornersWithRadius:kYCHActionSheetItemCornerRadius];
-            [self addSubview:titleLabel];
+            [_scrollView addSubview:titleLabel];
             offsetY += kYCHActionSheetButtonHeight;
         }
         
@@ -337,7 +348,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
                 [button roundTopCornersWithRadius:kYCHActionSheetItemCornerRadius];
             }
             
-            [self addSubview:button];
+            [_scrollView addSubview:button];
             
             offsetY += kYCHActionSheetButtonHeight;
         }
@@ -348,7 +359,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     // 3°) display cancel
     if (self.cancelButton)
     {
-        self.cancelButton.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
+        self.cancelButton.frame = CGRectMake(0, _scrollView.frame.size.height + kYCHActionSheetInterItemSpace, buttonWidth, kYCHActionSheetButtonHeight);
         [self.cancelButton roundAllCornersWithRadius:kYCHActionSheetItemCornerRadius];
         [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.cancelButton];
@@ -391,6 +402,13 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     [self.cancelButton setAttributedTitle:attributed forState:UIControlStateNormal];
 }
 
+- (CGSize)calculateFrameSize
+{
+    CGSize svSize = [self calculateScrollViewFrameSize];
+    CGFloat height = svSize.height + kYCHActionSheetButtonHeight + (kYCHActionSheetInterItemSpace*2);
+    return CGSizeMake(svSize.width, height);
+}
+
 - (CGFloat)calculateFrameHeight
 {
     CGFloat height = 0;
@@ -412,6 +430,34 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     height += kYCHActionSheetInterItemSpace;
     
     return height;
+}
+
+- (CGSize)calculateScrollViewContentSize
+{
+    CGFloat height = 0;
+    for (YCHActionSheetSection *section in _mutableSections)
+    {
+        if (section.title)
+            height += kYCHActionSheetButtonHeight;
+        
+        height += (section.buttons.count * kYCHActionSheetButtonHeight);
+        
+        if (section != _mutableSections.lastObject)
+            height += kYCHActionSheetInterItemSpace;
+    }
+    
+    CGFloat width = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
+    return CGSizeMake(width, height);
+}
+
+- (CGSize)calculateScrollViewFrameSize
+{
+    CGFloat width = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
+    CGFloat maxHeight = [self heightForView:self.presentingView] - kYCHActionSheetButtonHeight - (5*kYCHActionSheetInterItemSpace);
+    CGSize contentSize = [self calculateScrollViewContentSize];
+    CGFloat height = MIN(maxHeight, contentSize.height);
+    
+    return CGSizeMake(width, height);
 }
 
 - (CGFloat)widthForView:(UIView *)view
