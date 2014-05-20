@@ -8,13 +8,13 @@
 
 #import "YCHActionSheet.h"
 
-static CGFloat kYCHActionSheetButtonHeight              =   44.0;
-static CGFloat kYCHActionSheetInterItemSpace            =   10.0;
-static CGFloat kYCHActionSheetHorizontalSpace           =   20.0;
+static CGFloat const kYCHActionSheetButtonHeight              =   44.0;
+static CGFloat const kYCHActionSheetInterItemSpace            =   10.0;
+static CGFloat const kYCHActionSheetHorizontalSpace           =   20.0;
 
-static NSTimeInterval kYCHActionSheetAnimationDuration  =   0.3;
-static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
-static CGFloat kYCHActionSheetItemCornerRadius          =   3.0;
+static NSTimeInterval const kYCHActionSheetAnimationDuration  =   0.3;
+static CGFloat const kYCHActionSheetBackgroundLayerAlpha      =   0.4;
+static CGFloat const kYCHActionSheetItemCornerRadius          =   3.0;
 
 /**
  *  Functions
