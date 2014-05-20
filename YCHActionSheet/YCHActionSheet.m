@@ -38,6 +38,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
     CGContextClip(context);
     CGContextDrawRadialGradient(context, gradient, startCenter, 0, startCenter, rect.size.width * 0.5, 0);
     CGContextRestoreGState(context);
+    
+    CGGradientRelease(gradient);
 }
 
 /**
