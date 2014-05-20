@@ -150,6 +150,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 {
     NSMutableArray *_mutableSections;
     UIScrollView *_scrollView;
+    BOOL _willBeAnimated;
 }
 @property (assign, nonatomic, readwrite, getter = isVisible) BOOL visible;
 
@@ -166,10 +167,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 {
     if (self = [super init])
     {
-        self.backgroundColor = [UIColor redColor];
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
         _scrollView = [[UIScrollView alloc] init];
-        _scrollView.backgroundColor = [UIColor greenColor];
         [self addSubview:_scrollView];
     }
     return self;
@@ -240,15 +239,20 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 - (void)showInView:(UIView *)view
 {
+    _willBeAnimated = YES;
     self.visible = YES;
     self.presentingView = view;
 
+    // setup initial frame
     CGFloat startY = view.bounds.origin.y + [self heightForView:view];
     CGFloat width = [self widthForView:view] - kYCHActionSheetHorizontalSpace;
+    
+    // self height = scrollView height + cancel button height + 2 space
     CGFloat height = [self calculateScrollViewFrameSize].height + kYCHActionSheetButtonHeight + kYCHActionSheetInterItemSpace*2;
     self.frame = CGRectMake([self widthForView:view]/2 - width/2, startY, width, height);
     [view addSubview:self];
     
+    // add an opaque background layer
     self.backgroundLayerView.frame = view.bounds;
     [view insertSubview:self.backgroundLayerView belowSubview:self];
     
@@ -263,6 +267,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     };
     
     void (^completion)(BOOL finished) = ^(BOOL finished) {
+        _willBeAnimated = NO;
         if ([self.delegate respondsToSelector:@selector(didPresentActionSheet:)])
         {
             [self.delegate didPresentActionSheet:self];
@@ -274,6 +279,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 - (void)dismiss
 {
+    _willBeAnimated = YES;
+    
     if ([self.delegate respondsToSelector:@selector(willDismissActionSheet:)])
     {
         [self.delegate willDismissActionSheet:self];
@@ -285,6 +292,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     };
     
     void (^completion)(BOOL finished) = ^(BOOL finished) {
+        _willBeAnimated = NO;
         self.visible = NO;
         [self.backgroundLayerView removeFromSuperview];
         [self removeFromSuperview];
@@ -300,12 +308,24 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 - (void)setupUI
 {
+    // setup scrollView frame and contentSize
     CGSize svContentSize = [self calculateScrollViewContentSize];
     CGSize svFrame = [self calculateScrollViewFrameSize];
-    
     _scrollView.frame = CGRectMake(0, 0, svFrame.width, svFrame.height);
     _scrollView.contentSize = svContentSize;
     
+    // in case of rotation, fix action sheet frame
+    if (!_willBeAnimated)
+    {
+        CGSize frameSize = [self calculateFrameSize];
+        CGRect frame = CGRectMake([self widthForView:self.presentingView]/2 - frameSize.width/2,
+                                  [self heightForView:self.presentingView] - frameSize.height,
+                                  frameSize.width,
+                                  frameSize.height);
+        self.frame = frame;
+    }
+    
+    // setup action sheet view
     CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
     CGFloat offsetY = 0;
     
@@ -313,7 +333,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     {
         YCHActionSheetSection *section = self.sections[i];
         
-        // 1°) display title
         UILabel *titleLabel = section.titleLabel;
         if (titleLabel)
         {
@@ -323,7 +342,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
             offsetY += kYCHActionSheetButtonHeight;
         }
         
-        // 2°) display buttons
         NSArray *buttons = section.buttons;
         for (int j = 0; j < buttons.count; j++)
         {
@@ -356,7 +374,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
         offsetY += kYCHActionSheetInterItemSpace;
     }
     
-    // 3°) display cancel
     if (self.cancelButton)
     {
         self.cancelButton.frame = CGRectMake(0, _scrollView.frame.size.height + kYCHActionSheetInterItemSpace, buttonWidth, kYCHActionSheetButtonHeight);
@@ -407,29 +424,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     CGSize svSize = [self calculateScrollViewFrameSize];
     CGFloat height = svSize.height + kYCHActionSheetButtonHeight + (kYCHActionSheetInterItemSpace*2);
     return CGSizeMake(svSize.width, height);
-}
-
-- (CGFloat)calculateFrameHeight
-{
-    CGFloat height = 0;
-    for (YCHActionSheetSection *section in _mutableSections)
-    {
-        if (section.title)
-            height += kYCHActionSheetButtonHeight;
-        
-        height += (section.buttons.count * kYCHActionSheetButtonHeight);
-        
-        // this is for separation
-        height += kYCHActionSheetInterItemSpace;
-    }
-    
-    // this is for cancel button
-    height += kYCHActionSheetButtonHeight;
-    
-    // this is for letting some space
-    height += kYCHActionSheetInterItemSpace;
-    
-    return height;
 }
 
 - (CGSize)calculateScrollViewContentSize
