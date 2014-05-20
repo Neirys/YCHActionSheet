@@ -62,7 +62,11 @@
 @property (strong, nonatomic) NSArray *buttonTitles;
 @property (strong, nonatomic, readonly) NSArray *buttons;
 
+@property (assign, nonatomic, readonly, getter = isDestructiveSection) BOOL destructiveSection;
+
 - (instancetype)initWithTitle:(NSString *)title otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION;
+
++ (instancetype)destructiveSectionWithTitle:(NSString *)title;
 
 - (NSInteger)addButtonWithTitle:(NSString *)title;
 - (NSString *)buttonAtIndex:(NSInteger)index;

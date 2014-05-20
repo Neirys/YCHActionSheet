@@ -320,30 +320,52 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 }
 
 @property (strong, nonatomic, readwrite) YCHLabel *titleLabel;
+@property (assign, nonatomic, readwrite, getter = isDestructiveSection) BOOL destructiveSection;
+
 
 @end
 
 @implementation YCHActionSheetSection
 
-- (instancetype)initWithTitle:(NSString *)title otherButtonTitles:(NSString *)otherButtonTitles, ...
+- (instancetype)initWithTitle:(NSString *)title destructive:(BOOL)destructive firstButtonTitle:(NSString *)firstButtonTitle otherButtonsTitles:(va_list)otherButtonTitles
 {
     if (self = [super init])
     {
         _title = title;
+        _destructiveSection = destructive;
         
         _mutableButtonTitles = [NSMutableArray array];
-        va_list args;
-        va_start(args, otherButtonTitles);
-        for (NSString *arg = otherButtonTitles; arg != nil; arg = va_arg(args, NSString *))
+        for (NSString *arg = firstButtonTitle; arg != nil; arg = va_arg(otherButtonTitles, NSString *))
         {
             [_mutableButtonTitles addObject:arg];
         }
-        va_end(args);
         
         [self setupTitleLabel];
         [self setupButtons];
     }
     return self;
+}
+
+- (instancetype)initWithTitle:(NSString *)title destructive:(BOOL)destructive otherButtonTitles:(NSString *)otherButtonTitles, ...
+{
+    va_list args;
+    va_start(args, otherButtonTitles);
+    self = [self initWithTitle:title destructive:destructive firstButtonTitle:otherButtonTitles otherButtonsTitles:args];
+    va_end(args);
+    return self;
+}
+
+- (instancetype)initWithTitle:(NSString *)title otherButtonTitles:(NSString *)otherButtonTitles, ...
+{
+    va_list args;
+    va_start(args, otherButtonTitles);
+    self = [self initWithTitle:title destructive:NO firstButtonTitle:otherButtonTitles otherButtonsTitles:args];
+    return self;
+}
+
++ (instancetype)destructiveSectionWithTitle:(NSString *)title
+{
+    return [[self alloc] initWithTitle:nil destructive:YES otherButtonTitles:title, nil];
 }
 
 - (void)setTitle:(NSString *)title
@@ -400,8 +422,13 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
         YCHButton *button = [YCHButton buttonWithType:UIButtonTypeSystem];
         button.showBottomLine = buttonTitle != _mutableButtonTitles.lastObject;
 
-        NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:buttonTitle
-                                                                         attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:21.0]}];
+        NSMutableAttributedString *attributed = [[NSMutableAttributedString alloc] initWithString:buttonTitle
+                                                                                       attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:21.0]}];
+        if (self.isDestructiveSection)
+        {
+            [attributed addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(0, buttonTitle.length)];
+        }
+        
         [button setAttributedTitle:attributed forState:UIControlStateNormal];
         [button setBackgroundColor:[UIColor whiteColor]];
         
