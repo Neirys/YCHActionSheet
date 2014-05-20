@@ -146,6 +146,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 {
     NSMutableArray *_mutableSections;
 }
+@property (assign, nonatomic, readwrite, getter = isVisible) BOOL visible;
 
 @property (strong, nonatomic, readwrite) UIButton *cancelButton;
 @property (strong, nonatomic) UIView *backgroundLayerView;
@@ -202,6 +203,12 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 
 - (NSInteger)addSection:(YCHActionSheetSection *)section
 {
+    if (self.visible)
+    {
+        NSLog(@"YCHActionSheet error - You cannot add a section if action sheet is already visible");
+        return -1;
+    }
+    
     [_mutableSections addObject:section];
     return _mutableSections.count-1;
 }
@@ -213,6 +220,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 
 - (void)showFromView:(UIView *)view
 {
+    self.visible = YES;
     self.presentingView = view;
     
     CGFloat startY = view.frame.origin.y + view.frame.size.height;
@@ -339,6 +347,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
         self.frame = CGRectOffset(self.frame, 0, self.frame.size.height);
         self.backgroundLayerView.alpha = 0.0;
     } completion:^(BOOL finished) {
+        self.visible = NO;
         [self.backgroundLayerView removeFromSuperview];
         [self removeFromSuperview];
         

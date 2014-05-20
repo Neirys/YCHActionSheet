@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+@class YCHActionSheetSection, YCHActionSheet;
+
 /**
  * YCHActionSheetDelegate protocol
  */
-
-@class YCHActionSheetSection, YCHActionSheet;
 
 @protocol YCHActionSheetDelegate <NSObject>
 
@@ -35,6 +35,8 @@
 @interface YCHActionSheet : UIView
 
 @property (weak, nonatomic) id <YCHActionSheetDelegate> delegate;
+
+@property (assign, nonatomic, readonly, getter = isVisible) BOOL visible;
 
 @property (strong, nonatomic) NSArray *sections;
 
