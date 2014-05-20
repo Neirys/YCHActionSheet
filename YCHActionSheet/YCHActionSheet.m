@@ -12,7 +12,7 @@ static CGFloat const kYCHActionSheetButtonHeight              =   44.0;
 static CGFloat const kYCHActionSheetInterItemSpace            =   10.0;
 static CGFloat const kYCHActionSheetHorizontalSpace           =   20.0;
 
-static NSTimeInterval const kYCHActionSheetAnimationDuration  =   0.3;
+static NSTimeInterval const kYCHActionSheetAnimationDuration  =   0.5;
 static CGFloat const kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 static CGFloat const kYCHActionSheetItemCornerRadius          =   3.0;
 
@@ -253,7 +253,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
         }
     };
     
-    [UIView animateWithDuration:kYCHActionSheetAnimationDuration animations:animation completion:completion];
+    [UIView animateWithDuration:kYCHActionSheetAnimationDuration delay:0.0 usingSpringWithDamping:1 initialSpringVelocity:0 options:0 animations:animation completion:completion];
 }
 
 - (void)dismiss
@@ -279,7 +279,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
         }
     };
     
-    [UIView animateWithDuration:kYCHActionSheetAnimationDuration animations:animation completion:completion];
+    [UIView animateWithDuration:kYCHActionSheetAnimationDuration delay:0.0 usingSpringWithDamping:1 initialSpringVelocity:0 options:0 animations:animation completion:completion];
 }
 
 - (void)setupUI
