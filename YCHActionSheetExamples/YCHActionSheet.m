@@ -94,9 +94,19 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 
 @implementation YCHActionSheet
 
-- (instancetype)initWithSections:(NSArray *)sections cancelButtonTitle:(NSString *)cancelButtonTitle delegate:(id)delegate
+- (id)init
 {
     if (self = [super init])
+    {
+        self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+        self.backgroundColor = [UIColor redColor];
+    }
+    return self;
+}
+
+- (instancetype)initWithSections:(NSArray *)sections cancelButtonTitle:(NSString *)cancelButtonTitle delegate:(id)delegate
+{
+    if (self = [self init])
     {
         _mutableSections = [sections mutableCopy];
         _cancelButtonTitle = cancelButtonTitle;
