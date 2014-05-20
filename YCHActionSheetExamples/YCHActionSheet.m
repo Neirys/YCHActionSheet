@@ -10,6 +10,7 @@
 
 static CGFloat kYCHActionSheetButtonHeight              =   44.0;
 static CGFloat kYCHActionSheetInterItemSpace            =   10.0;
+static CGFloat kYCHActionSheetHorizontalSpace           =   20.0;
 
 static NSTimeInterval kYCHActionSheetAnimationDuration  =   0.3;
 static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
@@ -82,11 +83,12 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 @interface YCHActionSheet ()
 {
     NSMutableArray *_mutableSections;
-    CGFloat _buttonWidth;
 }
 
 @property (strong, nonatomic, readwrite) UIButton *cancelButton;
 @property (strong, nonatomic) UIView *backgroundLayerView;
+
+@property (weak, nonatomic) UIView *presentingView;
 
 @end
 
@@ -149,11 +151,12 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 
 - (void)showFromView:(UIView *)view
 {
-    _buttonWidth = view.frame.size.width - 20;
+    self.presentingView = view;
+    CGFloat width = view.frame.size.width - kYCHActionSheetHorizontalSpace;
     
     CGFloat startY = view.frame.origin.y + view.frame.size.height;
     CGFloat height = [self calculateFrameHeight];
-    self.frame = CGRectMake(view.frame.size.width/2 - _buttonWidth/2, startY, _buttonWidth, height);
+    self.frame = CGRectMake(view.frame.size.width/2 - width/2, startY, width, height);
     [view addSubview:self];
     
     self.backgroundLayerView.frame = view.bounds;
@@ -178,6 +181,7 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 #warning HANDLE ROTATION
 - (void)setupUI
 {
+    CGFloat buttonWidth = self.presentingView.frame.size.width - kYCHActionSheetHorizontalSpace;
     CGFloat offsetY = 0;
     
     for (int i = 0; i < self.sections.count; i++)
@@ -188,7 +192,7 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
         UILabel *titleLabel = section.titleLabel;
         if (titleLabel)
         {
-            titleLabel.frame = CGRectMake(0, offsetY, _buttonWidth, kYCHActionSheetButtonHeight);
+            titleLabel.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
             [self addSubview:titleLabel];
             offsetY += kYCHActionSheetButtonHeight;
         }
@@ -199,10 +203,9 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
         {
             YCHButton *button = buttons[j];
             
-            button.frame = CGRectMake(0, offsetY, _buttonWidth, kYCHActionSheetButtonHeight);
+            button.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
             button.sectionIndex = i;
             button.buttonIndex = j;
-#warning DUNNO IF ITS A GOOD PLACE FOR THIS I.E WHAT HAPPEND WHEN layoutSubviews GET CALLED MULTIPLE TIMES (orientation, etc)
             [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
 
             [self addSubview:button];
@@ -215,8 +218,7 @@ static CGFloat kYCHActionSheetBackgroundLayerAlpha      =   0.4;
     // 3°) display cancel
     if (self.cancelButton)
     {
-        self.cancelButton.frame = CGRectMake(0, offsetY, _buttonWidth, kYCHActionSheetButtonHeight);
-#warning SAME WARNING AS ABOVE
+        self.cancelButton.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
         [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.cancelButton];
     }
