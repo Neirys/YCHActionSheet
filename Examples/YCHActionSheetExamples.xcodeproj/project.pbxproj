@@ -14,7 +14,6 @@
 		F8A70DF819084DC500BA6D50 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A70DF719084DC500BA6D50 /* main.m */; };
 		F8A70DFC19084DC500BA6D50 /* YCHAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A70DFB19084DC500BA6D50 /* YCHAppDelegate.m */; };
 		F8A70DFF19084DC500BA6D50 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F8A70DFD19084DC500BA6D50 /* Main_iPhone.storyboard */; };
-		F8A70E0219084DC500BA6D50 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F8A70E0019084DC500BA6D50 /* Main_iPad.storyboard */; };
 		F8A70E0519084DC500BA6D50 /* YCHViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8A70E0419084DC500BA6D50 /* YCHViewController.m */; };
 		F8A70E0719084DC500BA6D50 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8A70E0619084DC500BA6D50 /* Images.xcassets */; };
 		F8A70E0E19084DC500BA6D50 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8A70E0D19084DC500BA6D50 /* XCTest.framework */; };
@@ -47,7 +46,6 @@
 		F8A70DFA19084DC500BA6D50 /* YCHAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YCHAppDelegate.h; sourceTree = "<group>"; };
 		F8A70DFB19084DC500BA6D50 /* YCHAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YCHAppDelegate.m; sourceTree = "<group>"; };
 		F8A70DFE19084DC500BA6D50 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
-		F8A70E0119084DC500BA6D50 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
 		F8A70E0319084DC500BA6D50 /* YCHViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YCHViewController.h; sourceTree = "<group>"; };
 		F8A70E0419084DC500BA6D50 /* YCHViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YCHViewController.m; sourceTree = "<group>"; };
 		F8A70E0619084DC500BA6D50 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -121,7 +119,6 @@
 				F8A70DFA19084DC500BA6D50 /* YCHAppDelegate.h */,
 				F8A70DFB19084DC500BA6D50 /* YCHAppDelegate.m */,
 				F8A70DFD19084DC500BA6D50 /* Main_iPhone.storyboard */,
-				F8A70E0019084DC500BA6D50 /* Main_iPad.storyboard */,
 				F8A70E0319084DC500BA6D50 /* YCHViewController.h */,
 				F8A70E0419084DC500BA6D50 /* YCHViewController.m */,
 				F8A70E0619084DC500BA6D50 /* Images.xcassets */,
@@ -246,7 +243,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F8A70E0219084DC500BA6D50 /* Main_iPad.storyboard in Resources */,
 				F8A70E0719084DC500BA6D50 /* Images.xcassets in Resources */,
 				F8A70DFF19084DC500BA6D50 /* Main_iPhone.storyboard in Resources */,
 				F8A70DF619084DC400BA6D50 /* InfoPlist.strings in Resources */,
@@ -308,14 +304,6 @@
 				F8A70DFE19084DC500BA6D50 /* Base */,
 			);
 			name = Main_iPhone.storyboard;
-			sourceTree = "<group>";
-		};
-		F8A70E0019084DC500BA6D50 /* Main_iPad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F8A70E0119084DC500BA6D50 /* Base */,
-			);
-			name = Main_iPad.storyboard;
 			sourceTree = "<group>";
 		};
 		F8A70E1619084DC500BA6D50 /* InfoPlist.strings */ = {
@@ -420,6 +408,7 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -442,6 +431,7 @@
 					"$(PROJECT_DIR)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -11,10 +11,6 @@
 #import "YCHActionSheet.h"
 
 @interface YCHViewController () <YCHActionSheetDelegate>
-
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *barButton;
-@property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
-
 @end
 
 @implementation YCHViewController
@@ -60,13 +56,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)uias:(id)sender
-{
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Test" delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete" otherButtonTitles:@"Hello", @"Button",@"Button",@"Button",@"Button", nil];
-    actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
-    [actionSheet showInView:self.view];
-}
-
 - (IBAction)displayActionSheet:(id)sender
 {
     YCHActionSheetSection *section1 = [YCHActionSheetSection destructiveSectionWithTitle:@"Reset"];
@@ -74,8 +63,6 @@
                                                                  otherButtonTitles:@"75%", @"50%", @"25%", nil];
     YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
                                                                  otherButtonTitles:@"90°", @"-90°", nil];
-    YCHActionSheetSection *section4 = [[YCHActionSheetSection alloc] initWithTitle:@"Blur"
-                                                                 otherButtonTitles:@"High", @"Medium", @"Low", nil];
     YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3]
                                                          cancelButtonTitle:@"Cancel"
                                                                   delegate:self];

@@ -25,12 +25,6 @@
                                             <action selector="displayActionSheet:" destination="vXZ-lx-hvc" id="KQd-JI-lb2"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="xi1-On-1vP"/>
-                                    <barButtonItem title="UI AS" id="2fG-yJ-1mF">
-                                        <connections>
-                                            <action selector="uias:" destination="vXZ-lx-hvc" id="kmH-9L-1Nv"/>
-                                        </connections>
-                                    </barButtonItem>
                                 </items>
                             </toolbar>
                         </subviews>
@@ -41,9 +35,6 @@
                             <constraint firstItem="6Ve-hv-Taa" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="eUX-Sn-GbL"/>
                         </constraints>
                     </view>
-                    <connections>
-                        <outlet property="barButton" destination="QOG-c9-9O8" id="mN8-NK-eAf"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
