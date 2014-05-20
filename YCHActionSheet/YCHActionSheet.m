@@ -563,6 +563,15 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     return self;
 }
 
++ (instancetype)sectionWithTitle:(NSString *)title otherButtonTitles:(NSString *)otherButtonTitles, ...
+{
+    va_list args;
+    va_start(args, otherButtonTitles);
+    YCHActionSheetSection *sheet = [[self alloc] initWithTitle:title destructive:NO firstButtonTitle:otherButtonTitles otherButtonsTitles:args];
+    va_end(args);
+    return sheet;
+}
+
 + (instancetype)destructiveSectionWithTitle:(NSString *)title
 {
     return [[self alloc] initWithTitle:nil destructive:YES otherButtonTitles:title, nil];

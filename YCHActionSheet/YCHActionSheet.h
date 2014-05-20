@@ -89,6 +89,9 @@
 // main method to create an action sheet section
 - (instancetype)initWithTitle:(NSString *)title otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION;
 
+// convenience method. same as -initWithTitle:otherButtonTitles:
++ (instancetype)sectionWithTitle:(NSString *)title otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION;
+
 // convenience method to create a destructive section
 + (instancetype)destructiveSectionWithTitle:(NSString *)title;
 
