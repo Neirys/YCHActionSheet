@@ -214,9 +214,9 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 - (void)showFromView:(UIView *)view
 {
     self.presentingView = view;
-    CGFloat width = view.frame.size.width - kYCHActionSheetHorizontalSpace;
     
     CGFloat startY = view.frame.origin.y + view.frame.size.height;
+    CGFloat width = view.frame.size.width - kYCHActionSheetHorizontalSpace;
     CGFloat height = [self calculateFrameHeight];
     self.frame = CGRectMake(view.frame.size.width/2 - width/2, startY, width, height);
     [view addSubview:self];
@@ -351,9 +351,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
 
 - (void)setupCancelButton
 {
-    if (!self.cancelButtonTitle)
-        return;
-
     NSString *cancelTitle = self.cancelButtonTitle ?: @"Cancel";
     self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.cancelButton setBackgroundColor:[UIColor whiteColor]];
