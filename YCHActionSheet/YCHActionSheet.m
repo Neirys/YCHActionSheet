@@ -22,10 +22,10 @@ static CGFloat const kYCHActionSheetItemCornerRadius          =   3.0;
  *  Functions
  */
 
-void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
+void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 {
     CGFloat colors [] = {
-        0.92, 0.92, 0.92, 1.0,
+        0.90, 0.90, 0.90, 1.0,
         0.75, 0.75, 0.75, 1.0,
     };
     
@@ -33,10 +33,10 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
     CGGradientRef gradient = CGGradientCreateWithColorComponents(baseSpace, colors, NULL, 2);
     CGColorSpaceRelease(baseSpace), baseSpace = NULL;
     
-    CGPoint startCenter = CGPointMake(rect.size.width/2, rect.origin.y + rect.size.height - 1);
+    CGPoint startCenter = CGPointMake(rect.size.width/2, rect.origin.y + rect.size.height - width);
 
     CGContextSaveGState(context);
-    CGContextAddRect(context, CGRectMake(rect.origin.x, rect.origin.y + rect.size.height - 1, rect.size.width, 1));
+    CGContextAddRect(context, CGRectMake(rect.origin.x, rect.origin.y + rect.size.height - width, rect.size.width, width));
     CGContextClip(context);
     CGContextDrawRadialGradient(context, gradient, startCenter, 0, startCenter, rect.size.width * 0.5, 0);
     CGContextRestoreGState(context);
@@ -112,7 +112,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
         return;
     
     CGContextRef context = UIGraphicsGetCurrentContext();
-    YCHDrawBottomGradientLine(context, rect);
+    YCHDrawBottomGradientLine(context, rect, 0.5);
 }
 
 - (void)setShowBottomLine:(BOOL)showBottomLine
@@ -137,7 +137,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect)
     [super drawRect:rect];
     
     CGContextRef context = UIGraphicsGetCurrentContext();
-    YCHDrawBottomGradientLine(context, rect);
+    YCHDrawBottomGradientLine(context, rect, 0.5);
 }
 
 @end
