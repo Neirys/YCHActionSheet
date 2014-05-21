@@ -500,14 +500,14 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     return CGSizeMake(contentSize.width, height);
 }
 
-- (BOOL)orientationConsideredAsPortrait:(UIDeviceOrientation)orientation
+- (BOOL)orientationConsideredAsPortrait:(UIInterfaceOrientation)orientation
 {
-    return UIInterfaceOrientationIsPortrait(orientation) || orientation == UIDeviceOrientationUnknown || orientation == UIDeviceOrientationFaceUp || orientation == UIDeviceOrientationFaceDown;
+    return UIInterfaceOrientationIsPortrait(orientation) || orientation == UIDeviceOrientationUnknown;
 }
 
 - (CGFloat)widthForView:(UIView *)view
 {
-    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
     return ([self orientationConsideredAsPortrait:orientation]
             ? view.frame.size.width
             : view.frame.size.height);
@@ -515,7 +515,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 - (CGFloat)heightForView:(UIView *)view
 {
-    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
     return ([self orientationConsideredAsPortrait:orientation]
             ? view.frame.size.height
             : view.frame.size.width);
