@@ -1,18 +1,18 @@
 YCHActionSheet
 ==============
 
-![alt tag](https://raw.github.com/Neirys/YCHActionSheet/master/Images/screenshot1.png)
+![](https://raw.github.com/Neirys/YCHActionSheet/master/Images/screenshot2.png)
 
-# Purpose
+## Purpose
 YCHActionSheet is a custom UIActionSheet visualy separated into sections.
 
-# Installation
+## Installation
 Simply drag YCHActionSheet.h and YCHActionSheet.m into your project and you are ready to go.
 
-# Requirements
+## Requirements
 Working only on iPhone device (iOS > 7.0). An update for iPad should be available soon.
 
-# How to use
+## How to use
 The first step is to prepare your sections by creating `YCHActionSheetSection` objects using the following methods :
 ```ios
 - (instancetype)initWithTitle:(NSString *)title otherButtonTitles:(NSString *)otherButtonTitles, ...;
@@ -36,7 +36,7 @@ then display it with :
 - (void)showInView:(UIView *)view;
 ```
 
-# Delegate
+## Delegate
 `YCHActionSheetDelegate` provides methods that can be used to intecept events. All those methods are optional.
 ```ios
 // called when a button was clicked at section index and button index
@@ -54,11 +54,11 @@ then display it with :
 - (void)didDismissActionSheet:(YCHActionSheet *)actionSheet;
 ```
 
-# Improvements
+## Improvements
 At this moment, there is an ugly animation happening during rotation where we can clearly see buttons being resized.
 I would appreciate if someone finds a way to remove this effect.
 
-# MIT License
+## MIT License
 Copyright (c) 2014 Yaman JAIOUCH
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -80,6 +80,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-# Release notes
+## Release notes
 Version 1.0
 * Initial release
