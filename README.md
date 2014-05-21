@@ -50,7 +50,7 @@ then display it with :
 // called before / after an action sheet is dismiss
 - (void)willDismissActionSheet:(YCHActionSheet *)actionSheet;
 - (void)didDismissActionSheet:(YCHActionSheet *)actionSheet;
-``
+```
 
 # Improvements
 At this moment, there is an ugly animation happening during rotation where we can clearly see buttons being resized.
