@@ -1,7 +1,7 @@
 YCHActionSheet
 ==============
 
-![](Images/screenshot1.png)
+![alt tag](https://raw.github.com/Neirys/YCHActionSheet/master/Images/screenshot1.png)
 
 # Purpose
 YCHActionSheet is a custom UIActionSheet visualy separated into sections.
