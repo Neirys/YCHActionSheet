@@ -27,6 +27,9 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wundeclared-selector"
+
 #import "YCHActionSheet.h"
 
 #pragma mark - 
@@ -680,4 +683,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 }
 
 @end
+
+#pragma GCC diagnostic pop
 
