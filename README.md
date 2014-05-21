@@ -1,6 +1,8 @@
 YCHActionSheet
 ==============
 
+![](Images/screenshot1.png)
+
 # Purpose
 YCHActionSheet is a custom UIActionSheet visualy separated into sections.
 
