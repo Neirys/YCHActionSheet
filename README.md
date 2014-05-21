@@ -1,13 +1,15 @@
 YCHActionSheet
 ==============
+[![Twitter: @yjaiouch](http://img.shields.io/badge/contact-%40yjaiouch-blue.svg?style=flat)](https://twitter.com/yjaiouch)
+[![License: MIT](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://github.com/Neirys/YCHActionSheet/blob/master/LICENSE)
 
 ![](https://raw.github.com/Neirys/YCHActionSheet/master/Images/screenshot2.png)
 
 ## Purpose
-YCHActionSheet is a custom UIActionSheet visualy separated into sections.
+`YCHActionSheet` is a custom UIActionSheet visually separated into sections.
 
 ## Installation
-Simply drag YCHActionSheet.h and YCHActionSheet.m into your project and you are ready to go.
+Simply drag `YCHActionSheet.h` and `YCHActionSheet.m` into your project and you are ready to go.
 
 ## Requirements
 Working only on iPhone device (iOS > 7.0). An update for iPad should be available soon.
@@ -27,7 +29,7 @@ You can also create a destructive section (unique button) by using :
 + (instancetype)destructiveSectionWithTitle:(NSString *)title;
 ```
 
-Once your sections are ready, initialize a YCHActionSheet object using :
+Once your sections are ready, initialize a `YCHActionSheet` object using :
 ```ios
 - (instancetype)initWithSections:(NSArray *)sections cancelButtonTitle:(NSString *)cancelButtonTitle delegate:(id<YCHActionSheetDelegate>)delegate;
 ```
