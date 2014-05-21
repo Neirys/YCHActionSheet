@@ -7,6 +7,9 @@ YCHActionSheet is a custom UIActionSheet visualy separated into sections.
 # Installation
 Simply drag YCHActionSheet.h and YCHActionSheet.m into your project and you are ready to go.
 
+# Requirements
+Working only on iPhone device (iOS > 7.0). An update for iPad should be available soon.
+
 # How to use
 The first step is to prepare your sections by creating `YCHActionSheetSection` objects using the following methods :
 ```ios
@@ -73,7 +76,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-   
+
 
 # Release notes
 Version 1.0
