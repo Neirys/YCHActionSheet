@@ -352,15 +352,20 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 - (void)prepareUI
 {
-    for (YCHActionSheetSection *section in self.sections)
+    for (int i = 0; i < self.sections.count; i++)
     {
+        YCHActionSheetSection *section = self.sections[i];
+        
         if (section.titleLabel)
         {
             [_scrollView addSubview:section.titleLabel];
         }
-        
-        for (UIButton *button in section.buttons)
+
+        for (int j = 0; j < section.buttons.count; j++)
         {
+            YCHButton *button = section.buttons[j];
+            button.sectionIndex = i;
+            button.buttonIndex = j;
             [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
             [_scrollView addSubview:button];
         }
@@ -390,11 +395,8 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     // setup action sheet view
     CGFloat offsetY = 0;
     CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
-    NSUInteger sectionCount = self.sections.count;
-    for (int i = 0; i < sectionCount; i++)
+    for (YCHActionSheetSection *section in self.sections)
     {
-        YCHActionSheetSection *section = self.sections[i];
-        
         UILabel *titleLabel = section.titleLabel;
         if (titleLabel)
         {
@@ -404,25 +406,19 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
             offsetY += kYCHActionSheetButtonHeight;
         }
         
-        NSArray *buttons = section.buttons;
-        NSUInteger buttonsCount = buttons.count;
-        for (int j = 0; j < buttonsCount; j++)
+        for (YCHButton *button in section.buttons)
         {
-            YCHButton *button = buttons[j];
-            
             button.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
-            button.sectionIndex = i;
-            button.buttonIndex = j;
             
-            if (buttons.count == 1)
+            if (section.buttons.count == 1)
             {
                 [button roundCorners:YCHRectCornerAll];
             }
-            else if (button == buttons.lastObject)
+            else if (button == section.buttons.lastObject)
             {
                 [button roundCorners:YCHRectCornerBottom];
             }
-            else if (button == buttons.firstObject && !titleLabel)
+            else if (button == section.buttons.firstObject && !titleLabel)
             {
                 [button roundCorners:YCHRectCornerTop];
             }
