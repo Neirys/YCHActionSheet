@@ -80,17 +80,22 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
  *  UIView categories
  */
 
+typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
+    YCHRectCornerTop        =   UIRectCornerTopLeft | UIRectCornerTopRight,
+    YCHRectCornerBottom     =   UIRectCornerBottomLeft | UIRectCornerBottomRight,
+    YCHRectCornerAll        =   UIRectCornerAllCorners,
+};
+
 @interface UIView (YCHRoundedCorner)
 
-- (void)roundTopCornersWithRadius:(CGFloat)radius;
-- (void)roundBottomCornersWithRadius:(CGFloat)radius;
-- (void)roundAllCornersWithRadius:(CGFloat)radius;
+- (void)roundCorners:(YCHRectCorner)corners withRadius:(CGFloat)radius;
+- (void)roundCorners:(YCHRectCorner)corners;
 
 @end
 
 @implementation UIView (YCHRoundedCorner)
 
-- (CAShapeLayer *)roundedCornerShapeForFrame:(CGRect)frame corners:(UIRectCorner)corners radius:(CGFloat)radius
+- (CAShapeLayer *)roundedCornerShapeWithFrame:(CGRect)frame corners:(UIRectCorner)corners radius:(CGFloat)radius
 {
     UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:frame byRoundingCorners:corners cornerRadii:CGSizeMake(radius, radius)];
     CAShapeLayer *shape = [[CAShapeLayer alloc] init];
@@ -99,24 +104,14 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     return shape;
 }
 
-- (void)roundCorners:(UIRectCorner)corners radius:(CGFloat)radius
+- (void)roundCorners:(YCHRectCorner)corners withRadius:(CGFloat)radius
 {
-    self.layer.mask = [self roundedCornerShapeForFrame:self.bounds corners:corners radius:radius];
+    self.layer.mask = [self roundedCornerShapeWithFrame:self.bounds corners:(UIRectCorner)corners radius:radius];
 }
 
-- (void)roundTopCornersWithRadius:(CGFloat)radius
+- (void)roundCorners:(YCHRectCorner)corners
 {
-    [self roundCorners:(UIRectCornerTopRight | UIRectCornerTopLeft) radius:radius];
-}
-
-- (void)roundBottomCornersWithRadius:(CGFloat)radius
-{
-    [self roundCorners:(UIRectCornerBottomLeft | UIRectCornerBottomRight) radius:radius];
-}
-
-- (void)roundAllCornersWithRadius:(CGFloat)radius
-{
-    [self roundCorners:(UIRectCornerAllCorners) radius:radius];
+    [self roundCorners:corners withRadius:kYCHActionSheetItemCornerRadius];
 }
 
 @end
@@ -408,7 +403,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
         if (titleLabel)
         {
             titleLabel.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
-            [titleLabel roundTopCornersWithRadius:kYCHActionSheetItemCornerRadius];
+            [titleLabel roundCorners:YCHRectCornerTop];
             
             offsetY += kYCHActionSheetButtonHeight;
         }
@@ -424,15 +419,15 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
             
             if (buttons.count == 1)
             {
-                [button roundAllCornersWithRadius:kYCHActionSheetItemCornerRadius];
+                [button roundCorners:YCHRectCornerAll];
             }
             else if (button == buttons.lastObject)
             {
-                [button roundBottomCornersWithRadius:kYCHActionSheetItemCornerRadius];
+                [button roundCorners:YCHRectCornerBottom];
             }
             else if (button == buttons.firstObject && !titleLabel)
             {
-                [button roundTopCornersWithRadius:kYCHActionSheetItemCornerRadius];
+                [button roundCorners:YCHRectCornerTop];
             }
             
             offsetY += kYCHActionSheetButtonHeight;
@@ -444,7 +439,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     if (self.cancelButton)
     {
         self.cancelButton.frame = CGRectMake(0, _scrollView.frame.size.height + kYCHActionSheetInterItemSpace, buttonWidth, kYCHActionSheetButtonHeight);
-        [self.cancelButton roundAllCornersWithRadius:kYCHActionSheetItemCornerRadius];
+        [self.cancelButton roundCorners:YCHRectCornerAll];
     }
 }
 
