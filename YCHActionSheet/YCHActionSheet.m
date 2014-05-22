@@ -45,12 +45,7 @@ static NSTimeInterval const kYCHActionSheetAnimationDuration  =   0.5;
 static CGFloat const kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 static CGFloat const kYCHActionSheetItemCornerRadius          =   3.0;
 
-#pragma mark - 
-#pragma mark Functions
-
-/**
- *  Functions
- */
+#pragma mark - Functions
 
 void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 {
@@ -73,12 +68,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     CGGradientRelease(gradient);
 }
 
-#pragma mark - 
-#pragma mark UIView categories
-
-/**
- *  UIView categories
- */
+#pragma mark - UIView categories
 
 typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     YCHRectCornerTop        =   UIRectCornerTopLeft | UIRectCornerTopRight,
@@ -116,18 +106,12 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 @end
 
-#pragma mark - 
-#pragma mark YCHButton class
-
-/**
- *  YCHButton class
- */
+#pragma mark - YCHButton class
 
 @interface YCHButton : UIButton
 
 @property (assign, nonatomic) NSUInteger sectionIndex;
 @property (assign, nonatomic) NSUInteger buttonIndex;
-
 @property (assign, nonatomic) BOOL showBottomLine;
 
 @end
@@ -153,12 +137,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 @end
 
-#pragma mark -
-#pragma mark YCHLabel class
-
-/**
- *  YCHLabel class
- */
+#pragma mark - YCHLabel class
 
 @interface YCHLabel : UILabel
 @end
@@ -175,12 +154,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 @end
 
-#pragma mark -
-#pragma mark YCHActionSheet implementation
-
-/**
- *  YCHActionSheet implementation
- */
+#pragma mark - YCHActionSheet implementation
 
 @interface YCHActionSheet ()
 {
@@ -550,12 +524,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 @end
 
-#pragma mark - 
-#pragma mark YCHActionSheetSection implementation
-
-/**
- *  YCHActionSheetSection implementation
- */
+#pragma mark - YCHActionSheetSection implementation
 
 @interface YCHActionSheetSection ()
 {
