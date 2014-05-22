@@ -381,10 +381,8 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 - (void)setupUI
 {
     // setup scrollView frame and contentSize
-    CGSize svContentSize = [self calculateScrollViewContentSize];
-    CGSize svFrame = [self calculateScrollViewFrameSize];
-    _scrollView.frame = CGRectMake(0, 0, svFrame.width, svFrame.height);
-    _scrollView.contentSize = svContentSize;
+    _scrollView.frame = [self calculateScrollViewFrame];
+    _scrollView.contentSize = [self calculateScrollViewContentSize];
     
     // in case of rotation, fix action sheet frame
     if (!_willAnimate)
@@ -397,11 +395,10 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
     for (YCHActionSheetSection *section in self.sections)
     {
-        UILabel *titleLabel = section.titleLabel;
-        if (titleLabel)
+        if (section.titleLabel)
         {
-            titleLabel.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
-            [titleLabel roundCorners:YCHRectCornerTop];
+            section.titleLabel.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
+            [section.titleLabel roundCorners:YCHRectCornerTop];
             
             offsetY += kYCHActionSheetButtonHeight;
         }
@@ -409,19 +406,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
         for (YCHButton *button in section.buttons)
         {
             button.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
-            
-            if (section.buttons.count == 1)
-            {
-                [button roundCorners:YCHRectCornerAll];
-            }
-            else if (button == section.buttons.lastObject)
-            {
-                [button roundCorners:YCHRectCornerBottom];
-            }
-            else if (button == section.buttons.firstObject && !titleLabel)
-            {
-                [button roundCorners:YCHRectCornerTop];
-            }
+            [self roundCornerButton:button inSection:section];
             
             offsetY += kYCHActionSheetButtonHeight;
         }
@@ -476,6 +461,22 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 #pragma mark - Helper methods
 
+- (void)roundCornerButton:(YCHButton *)button inSection:(YCHActionSheetSection *)section
+{
+    if (section.buttons.count == 1)
+    {
+        [button roundCorners:YCHRectCornerAll];
+    }
+    else if (button == section.buttons.lastObject)
+    {
+        [button roundCorners:YCHRectCornerBottom];
+    }
+    else if (button == section.buttons.firstObject && !section.titleLabel)
+    {
+        [button roundCorners:YCHRectCornerTop];
+    }
+}
+
 - (void)fixActionSheetFrame
 {
     CGSize frameSize = [self calculateFrameSize];
@@ -518,6 +519,12 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     CGFloat height = MIN(maxHeight, contentSize.height);
     
     return CGSizeMake(contentSize.width, height);
+}
+
+- (CGRect)calculateScrollViewFrame
+{
+    CGSize svSize = [self calculateScrollViewFrameSize];
+    return CGRectMake(0, 0, svSize.width, svSize.height);
 }
 
 - (BOOL)orientationConsideredAsPortrait:(UIInterfaceOrientation)orientation
