@@ -384,18 +384,14 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     // in case of rotation, fix action sheet frame
     if (!_willAnimate)
     {
-        CGSize frameSize = [self calculateFrameSize];
-        CGRect frame = CGRectMake([self widthForView:self.presentingView]/2 - frameSize.width/2,
-                                  [self heightForView:self.presentingView] - frameSize.height,
-                                  frameSize.width,
-                                  frameSize.height);
-        self.frame = frame;
+        [self fixActionSheetFrame];
     }
     
     // setup action sheet view
     CGFloat offsetY = 0;
     CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
-    for (int i = 0; i < self.sections.count; i++)
+    NSUInteger sectionCount = self.sections.count;
+    for (int i = 0; i < sectionCount; i++)
     {
         YCHActionSheetSection *section = self.sections[i];
         
@@ -409,7 +405,8 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
         }
         
         NSArray *buttons = section.buttons;
-        for (int j = 0; j < buttons.count; j++)
+        NSUInteger buttonsCount = buttons.count;
+        for (int j = 0; j < buttonsCount; j++)
         {
             YCHButton *button = buttons[j];
             
@@ -482,6 +479,16 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 }
 
 #pragma mark - Helper methods
+
+- (void)fixActionSheetFrame
+{
+    CGSize frameSize = [self calculateFrameSize];
+    CGRect frame = CGRectMake([self widthForView:self.presentingView]/2 - frameSize.width/2,
+                              [self heightForView:self.presentingView] - frameSize.height,
+                              frameSize.width,
+                              frameSize.height);
+    self.frame = frame;
+}
 
 - (CGSize)calculateFrameSize
 {
