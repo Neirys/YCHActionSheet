@@ -290,6 +290,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     _willAnimate = YES;
     self.visible = YES;
     self.presentingView = view;
+    
+    [self prepareUI];
 
     // setup initial frame
     CGFloat startY = view.bounds.origin.y + [self heightForView:view];
@@ -353,6 +355,29 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 #pragma mark - Setup UI methods
 
+- (void)prepareUI
+{
+    for (YCHActionSheetSection *section in self.sections)
+    {
+        if (section.titleLabel)
+        {
+            [_scrollView addSubview:section.titleLabel];
+        }
+        
+        for (UIButton *button in section.buttons)
+        {
+            [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
+            [_scrollView addSubview:button];
+        }
+    }
+    
+    if (self.cancelButton)
+    {
+        [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
+        [self addSubview:self.cancelButton];
+    }
+}
+
 - (void)setupUI
 {
     // setup scrollView frame and contentSize
@@ -384,7 +409,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
         {
             titleLabel.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
             [titleLabel roundTopCornersWithRadius:kYCHActionSheetItemCornerRadius];
-            [_scrollView addSubview:titleLabel];
+            
             offsetY += kYCHActionSheetButtonHeight;
         }
         
@@ -396,8 +421,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
             button.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
             button.sectionIndex = i;
             button.buttonIndex = j;
-            [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
-            
             
             if (buttons.count == 1)
             {
@@ -412,8 +435,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
                 [button roundTopCornersWithRadius:kYCHActionSheetItemCornerRadius];
             }
             
-            [_scrollView addSubview:button];
-            
             offsetY += kYCHActionSheetButtonHeight;
         }
         
@@ -424,8 +445,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     {
         self.cancelButton.frame = CGRectMake(0, _scrollView.frame.size.height + kYCHActionSheetInterItemSpace, buttonWidth, kYCHActionSheetButtonHeight);
         [self.cancelButton roundAllCornersWithRadius:kYCHActionSheetItemCornerRadius];
-        [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
-        [self addSubview:self.cancelButton];
     }
 }
 
