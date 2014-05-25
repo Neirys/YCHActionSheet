@@ -9,7 +9,11 @@ YCHActionSheet
 `YCHActionSheet` is a custom UIActionSheet visually separated into sections.
 
 ## Installation
-Simply drag `YCHActionSheet.h` and `YCHActionSheet.m` into your project and you are ready to go.
+#### Podfile
+```ruby
+pod 'YCHActionSheet'
+```
+or simply drag `YCHActionSheet.h` and `YCHActionSheet.m` into your project and you are ready to go.
 
 ## Requirements
 Working only on iPhone device (iOS > 7.0). An update for iPad should be available soon.
