@@ -182,6 +182,8 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     {
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
         _scrollView = [[UIScrollView alloc] init];
+        _scrollView.showsHorizontalScrollIndicator = NO;
+        _scrollView.showsVerticalScrollIndicator = NO;
         [self addSubview:_scrollView];
     }
     return self;
