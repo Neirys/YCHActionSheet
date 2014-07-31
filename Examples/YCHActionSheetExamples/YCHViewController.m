@@ -11,6 +11,9 @@
 #import "YCHActionSheet.h"
 
 @interface YCHViewController () <YCHActionSheetDelegate>
+{
+    YCHActionSheet *_actionSheet;
+}
 @end
 
 @implementation YCHViewController
@@ -61,13 +64,18 @@
     YCHActionSheetSection *section1 = [YCHActionSheetSection destructiveSectionWithTitle:@"Reset"];
     YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Compression"
                                                                  otherButtonTitles:@"75%", @"50%", @"25%", nil];
+    
     YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
                                                                  otherButtonTitles:@"90°", @"-90°", nil];
-    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3]
+//    YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
+//                                                                 otherButtonTitles:@"90°", @"-90°", @"test",@"test",@"test",@"test",@"test",@"test",@"test", nil];
+    
+    _actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3]
                                                          cancelButtonTitle:@"Cancel"
                                                                   delegate:self];
 
-    [actionSheet showInView:self.view];
+    [_actionSheet showInView:self.view];
+    NSLog(@"vc : %@", _actionSheet);
 }
 
 @end
