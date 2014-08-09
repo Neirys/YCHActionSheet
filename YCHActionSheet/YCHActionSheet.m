@@ -417,14 +417,14 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
         [self.delegate actionSheet:self clickedButtonAtIndex:button.buttonIndex sectionIndex:button.sectionIndex];
     }
 
-	BOOL shouldDismiss = YES;
-	if ([self.delegate respondsToSelector:@selector(actionSheet:shouldDismissForButtonAtIndex:sectionIndex:)])
+    BOOL shouldDismiss = YES;
+    if ([self.delegate respondsToSelector:@selector(actionSheet:shouldDismissForButtonAtIndex:sectionIndex:)])
 	{
-		shouldDismiss = [self.delegate actionSheet:self shouldDismissForButtonAtIndex:button.buttonIndex sectionIndex:button.sectionIndex];
-	}
+        shouldDismiss = [self.delegate actionSheet:self shouldDismissForButtonAtIndex:button.buttonIndex sectionIndex:button.sectionIndex];
+    }
 
-	if (shouldDismiss)
-		[self dismiss];
+    if (shouldDismiss)
+        [self dismiss];
 }
 
 - (void)cancelButtonWasTouched:(id)sender
