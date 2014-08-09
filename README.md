@@ -58,6 +58,10 @@ then display it with :
 // called before / after an action sheet is dismiss
 - (void)willDismissActionSheet:(YCHActionSheet *)actionSheet;
 - (void)didDismissActionSheet:(YCHActionSheet *)actionSheet;
+
+// Called when a button is clicked. Returning NO will prevent the click from dismissing the action sheet.
+// The default is YES.
+- (BOOL)actionSheet:(YCHActionSheet *)actionSheet shouldDismissForButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex;
 ```
 
 ## Improvements
