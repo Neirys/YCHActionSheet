@@ -161,9 +161,14 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 @interface YCHActionSheet ()
 {
     NSMutableArray *_mutableSections;
+    
     UIView *_rv;
+    UIView *_uv;
     UIScrollView *_sv;
     UIView *_cv;
+    
+    NSArray *_offScreenConstraints;
+    NSArray *_onScreenConstraints;
 }
 
 @property (assign, nonatomic, readwrite, getter = isVisible) BOOL visible;
@@ -180,7 +185,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 {
     if (self = [super init])
     {
-        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
+        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.0];
         self.translatesAutoresizingMaskIntoConstraints = NO;
         
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
@@ -250,11 +255,44 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     [view addSubview:self];
     [view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[actionSheet]|" options:0 metrics:0 views:@{@"actionSheet":self}]];
     [view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[actionSheet]|" options:0 metrics:0 views:@{@"actionSheet":self}]];
+    [view layoutIfNeeded];
     
+    if ([self.delegate respondsToSelector:@selector(willPresentActionSheet:)])
+    {
+        [self.delegate willPresentActionSheet:self];
+    }
+    
+    // position action sheet offscreen
+    CGFloat viewHeight = self.frame.size.height;
+    NSString *vfl = [NSString stringWithFormat:@"V:|-(%f)-[uv]-(%f)-|", viewHeight, -viewHeight];
+    _offScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:vfl options:0 metrics:nil views:@{@"uv":_uv}];
+    [self addConstraints:_offScreenConstraints];
+    [self layoutIfNeeded];
+    
+    // animate
+    [self removeConstraints:_offScreenConstraints];
+    _onScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}];
+    [self addConstraints:_onScreenConstraints];
+    
+    void (^animation)(void) = ^{
+        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:kYCHActionSheetBackgroundLayerAlpha];
+        [self layoutIfNeeded];
+    };
+    
+    void (^completion)(BOOL finished) = ^(BOOL finished) {
+        self.visible = YES;
+        
+        if ([self.delegate respondsToSelector:@selector(didPresentActionSheet:)])
+        {
+            [self.delegate didPresentActionSheet:self];
+        }
+    };
+    
+    [UIView animateWithDuration:kYCHActionSheetAnimationDuration delay:0.0 usingSpringWithDamping:1 initialSpringVelocity:0 options:0 animations:animation completion:completion];
+
     // calculate and setup content view frame + scroll view content size
     [_sv layoutIfNeeded];
     [self fixScrollViewContentSize];
-    
 }
 
 - (void)dismiss
@@ -264,21 +302,25 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
         [self.delegate willDismissActionSheet:self];
     }
     
-//    void (^animation)(void) = ^{
-//        self.frame = CGRectOffset(self.frame, 0, self.frame.size.height);
-//    };
-//    
-//    void (^completion)(BOOL finished) = ^(BOOL finished) {
-//        self.visible = NO;
-//        [self removeFromSuperview];
-//        
-//        if ([self.delegate respondsToSelector:@selector(didDismissActionSheet:)])
-//        {
-//            [self.delegate didDismissActionSheet:self];
-//        }
-//    };
-//    
-//    [UIView animateWithDuration:kYCHActionSheetAnimationDuration delay:0.0 usingSpringWithDamping:1 initialSpringVelocity:0 options:0 animations:animation completion:completion];
+    [self removeConstraints:_onScreenConstraints];
+    [self addConstraints:_offScreenConstraints];
+    
+    void (^animation)(void) = ^{
+        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.0];
+        [self layoutIfNeeded];
+    };
+    
+    void (^completion)(BOOL finished) = ^(BOOL finished) {
+        self.visible = NO;
+        [self removeFromSuperview];
+        
+        if ([self.delegate respondsToSelector:@selector(didDismissActionSheet:)])
+        {
+            [self.delegate didDismissActionSheet:self];
+        }
+    };
+    
+    [UIView animateWithDuration:kYCHActionSheetAnimationDuration delay:0.0 usingSpringWithDamping:1 initialSpringVelocity:0 options:0 animations:animation completion:completion];
 }
 
 #pragma mark - Notification handlers
@@ -293,34 +335,37 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 - (void)setupBaseViews
 {
     // upper content view
-    UIView *uv = [UIView new];
-    uv.backgroundColor = [UIColor purpleColor];
-    uv.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:uv];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[uv]-10-|" options:0 metrics:nil views:@{@"uv":uv}]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[uv]-10-|" options:0 metrics:nil views:@{@"uv":uv}]];
+    _uv = [UIView new];
+//    _uv.backgroundColor = [UIColor purpleColor];
+    _uv.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:_uv];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}]];
+//    _onScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}];
+//    [self addConstraints:_onScreenConstraints];
     
     // position cancel button
     self.cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
-    [uv addSubview:self.cancelButton];
+    [_uv addSubview:self.cancelButton];
     [self.cancelButton addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cancel(40)]" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
-    [uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
-    [uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
-    [uv layoutIfNeeded];
+    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
+    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
+    [_uv layoutIfNeeded];
     
     // add a scrollView
     _sv = [UIScrollView new];
+    _sv.showsHorizontalScrollIndicator = NO;
+    _sv.showsVerticalScrollIndicator = NO;
 //    _sv.backgroundColor = [UIColor redColor];
     _sv.translatesAutoresizingMaskIntoConstraints = NO;
-    [uv addSubview:_sv];
-    [uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[sv]|" options:0 metrics:nil views:@{@"sv":_sv}]];
-    [uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sv]-10-[cancel]" options:0 metrics:nil views:@{@"sv":_sv, @"cancel":self.cancelButton}]];
+    [_uv addSubview:_sv];
+    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[sv]|" options:0 metrics:nil views:@{@"sv":_sv}]];
+    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sv]-10-[cancel]" options:0 metrics:nil views:@{@"sv":_sv, @"cancel":self.cancelButton}]];
     
     // add a scroll view's content view
     _cv = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
     _cv.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
-    _cv.backgroundColor = [UIColor greenColor];
+//    _cv.backgroundColor = [UIColor greenColor];
     [_sv addSubview:_cv];
 }
 
