@@ -70,17 +70,16 @@
     YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Compression"
                                                                  otherButtonTitles:@"75%", @"50%", @"25%", nil];
     
-//    YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
-//                                                                 otherButtonTitles:@"90°", @"-90°", nil];
     YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
-                                                                 otherButtonTitles:@"90°", @"-90°", @"test",@"test",@"test",@"test",@"test",@"test",@"test", nil];
+                                                                 otherButtonTitles:@"90°", @"-90°", nil];
+//    YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
+//                                                                 otherButtonTitles:@"90°", @"-90°", @"test",@"test",@"test",@"test",@"test",@"test",@"test", nil];
     
     _actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3]
                                                          cancelButtonTitle:@"Cancel"
                                                                   delegate:self];
 
     [_actionSheet showInView:self.view];
-    NSLog(@"vc : %@", _actionSheet);
 }
 
 @end

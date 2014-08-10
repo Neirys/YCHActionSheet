@@ -187,6 +187,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     {
         self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.0];
         self.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundWasTouched:)]];
         
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
@@ -332,6 +333,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 #pragma mark - Setup UI
 
+// FIXME: Replace all hard-coded button height by a constant ?
 - (void)setupBaseViews
 {
     // upper content view
@@ -340,8 +342,6 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     _uv.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_uv];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}]];
-//    _onScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}];
-//    [self addConstraints:_onScreenConstraints];
     
     // position cancel button
     self.cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -475,7 +475,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     [self dismiss];
 }
 
-- (void)backgroundLayerWasTouched:(UIGestureRecognizer *)gesture
+- (void)backgroundWasTouched:(UIGestureRecognizer *)gesture
 {
     [self dismiss];
 }
