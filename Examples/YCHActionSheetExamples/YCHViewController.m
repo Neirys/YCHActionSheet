@@ -58,6 +58,11 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+- (IBAction)displayNormalSheet:(id)sender
+{
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"test" delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"test", nil];
+    [actionSheet showInView:self.view];
+}
 
 - (IBAction)displayActionSheet:(id)sender
 {
