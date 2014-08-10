@@ -189,11 +189,11 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
         
-        self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-        _scrollView = [[UIScrollView alloc] init];
-        _scrollView.showsHorizontalScrollIndicator = NO;
-        _scrollView.showsVerticalScrollIndicator = NO;
-        [self addSubview:_scrollView];
+//        self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+//        _scrollView = [[UIScrollView alloc] init];
+//        _scrollView.showsHorizontalScrollIndicator = NO;
+//        _scrollView.showsVerticalScrollIndicator = NO;
+//        [self addSubview:_scrollView];
     }
     NSLog(@"%@", self);
     return self;
@@ -247,23 +247,24 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 - (void)setSections:(NSArray *)sections
 {
     _mutableSections = [sections mutableCopy];
+    [_mutableSections makeObjectsPerformSelector:@selector(setActionSheet:) withObject:self];
 }
 
-- (UIView *)backgroundLayerView
-{
-    if (_backgroundLayerView)
-        return _backgroundLayerView;
-    
-    _backgroundLayerView = [[UIView alloc] init];
-    _backgroundLayerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    _backgroundLayerView.backgroundColor = [UIColor blackColor];
-    _backgroundLayerView.opaque = YES;
-    _backgroundLayerView.alpha = 0;
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundLayerWasTouched:)];
-    [_backgroundLayerView addGestureRecognizer:tap];
-    
-    return _backgroundLayerView;
-}
+//- (UIView *)backgroundLayerView
+//{
+//    if (_backgroundLayerView)
+//        return _backgroundLayerView;
+//    
+//    _backgroundLayerView = [[UIView alloc] init];
+//    _backgroundLayerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+//    _backgroundLayerView.backgroundColor = [UIColor blackColor];
+//    _backgroundLayerView.opaque = YES;
+//    _backgroundLayerView.alpha = 0;
+//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundLayerWasTouched:)];
+//    [_backgroundLayerView addGestureRecognizer:tap];
+//    
+//    return _backgroundLayerView;
+//}
 
 #pragma mark - Public methods
 
@@ -488,76 +489,76 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 #pragma mark - Setup UI methods
 
-- (void)prepareUI
-{
-    for (int i = 0; i < self.sections.count; i++)
-    {
-        YCHActionSheetSection *section = self.sections[i];
-        
-        if (section.titleLabel)
-        {
-            [_scrollView addSubview:section.titleLabel];
-        }
+//- (void)prepareUI
+//{
+//    for (int i = 0; i < self.sections.count; i++)
+//    {
+//        YCHActionSheetSection *section = self.sections[i];
+//        
+//        if (section.titleLabel)
+//        {
+//            [_scrollView addSubview:section.titleLabel];
+//        }
+//
+//        for (int j = 0; j < section.buttons.count; j++)
+//        {
+//            YCHButton *button = section.buttons[j];
+//            button.sectionIndex = i;
+//            button.buttonIndex = j;
+//            [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
+//            [_scrollView addSubview:button];
+//        }
+//    }
+//    
+//    if (self.cancelButton)
+//    {
+//        [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
+//        [self addSubview:self.cancelButton];
+//    }
+//}
 
-        for (int j = 0; j < section.buttons.count; j++)
-        {
-            YCHButton *button = section.buttons[j];
-            button.sectionIndex = i;
-            button.buttonIndex = j;
-            [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
-            [_scrollView addSubview:button];
-        }
-    }
-    
-    if (self.cancelButton)
-    {
-        [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
-        [self addSubview:self.cancelButton];
-    }
-}
-
-- (void)setupUI
-{
-    // setup scrollView frame and contentSize
-    _scrollView.frame = [self calculateScrollViewFrame];
-    _scrollView.contentSize = [self calculateScrollViewContentSize];
-    
-    // in case of rotation, fix action sheet frame
-    if (!_willAnimate)
-    {
-        [self fixActionSheetFrame];
-    }
-    
-    // setup action sheet view
-    CGFloat offsetY = 0;
-    CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
-    for (YCHActionSheetSection *section in self.sections)
-    {
-        if (section.titleLabel)
-        {
-            section.titleLabel.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
-            [section.titleLabel roundCorners:YCHRectCornerTop];
-            
-            offsetY += kYCHActionSheetButtonHeight;
-        }
-        
-        for (YCHButton *button in section.buttons)
-        {
-            button.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
-            [self roundCornerButton:button inSection:section];
-            
-            offsetY += kYCHActionSheetButtonHeight;
-        }
-        
-        offsetY += kYCHActionSheetInterItemSpace;
-    }
-    
-    if (self.cancelButton)
-    {
-        self.cancelButton.frame = CGRectMake(0, _scrollView.frame.size.height + kYCHActionSheetInterItemSpace, buttonWidth, kYCHActionSheetButtonHeight);
-        [self.cancelButton roundCorners:YCHRectCornerAll];
-    }
-}
+//- (void)setupUI
+//{
+//    // setup scrollView frame and contentSize
+//    _scrollView.frame = [self calculateScrollViewFrame];
+//    _scrollView.contentSize = [self calculateScrollViewContentSize];
+//    
+//    // in case of rotation, fix action sheet frame
+//    if (!_willAnimate)
+//    {
+//        [self fixActionSheetFrame];
+//    }
+//    
+//    // setup action sheet view
+//    CGFloat offsetY = 0;
+//    CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
+//    for (YCHActionSheetSection *section in self.sections)
+//    {
+//        if (section.titleLabel)
+//        {
+//            section.titleLabel.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
+//            [section.titleLabel roundCorners:YCHRectCornerTop];
+//            
+//            offsetY += kYCHActionSheetButtonHeight;
+//        }
+//        
+//        for (YCHButton *button in section.buttons)
+//        {
+//            button.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
+//            [self roundCornerButton:button inSection:section];
+//            
+//            offsetY += kYCHActionSheetButtonHeight;
+//        }
+//        
+//        offsetY += kYCHActionSheetInterItemSpace;
+//    }
+//    
+//    if (self.cancelButton)
+//    {
+//        self.cancelButton.frame = CGRectMake(0, _scrollView.frame.size.height + kYCHActionSheetInterItemSpace, buttonWidth, kYCHActionSheetButtonHeight);
+//        [self.cancelButton roundCorners:YCHRectCornerAll];
+//    }
+//}
 
 - (void)setupCancelButton
 {
@@ -622,76 +623,76 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     }
 }
 
-- (void)fixActionSheetFrame
-{
-    CGSize frameSize = [self calculateFrameSize];
-    CGRect frame = CGRectMake([self widthForView:self.presentingView]/2 - frameSize.width/2,
-                              [self heightForView:self.presentingView] - frameSize.height,
-                              frameSize.width,
-                              frameSize.height);
-    self.frame = frame;
-}
-
-- (CGSize)calculateFrameSize
-{
-    CGSize svSize = [self calculateScrollViewFrameSize];
-    CGFloat height = svSize.height + kYCHActionSheetButtonHeight + (kYCHActionSheetInterItemSpace*2);
-    return CGSizeMake(svSize.width, height);
-}
-
-- (CGSize)calculateScrollViewContentSize
-{
-    CGFloat height = 0;
-    for (YCHActionSheetSection *section in _mutableSections)
-    {
-        if (section.title)
-            height += kYCHActionSheetButtonHeight;
-        
-        height += (section.buttons.count * kYCHActionSheetButtonHeight);
-        
-        if (section != _mutableSections.lastObject)
-            height += kYCHActionSheetInterItemSpace;
-    }
-    
-    CGFloat width = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
-    return CGSizeMake(width, height);
-}
-
-- (CGSize)calculateScrollViewFrameSize
-{
-    CGFloat maxHeight = [self heightForView:self.presentingView] - kYCHActionSheetButtonHeight - (5*kYCHActionSheetInterItemSpace);
-    CGSize contentSize = [self calculateScrollViewContentSize];
-    CGFloat height = MIN(maxHeight, contentSize.height);
-    
-    return CGSizeMake(contentSize.width, height);
-}
-
-- (CGRect)calculateScrollViewFrame
-{
-    CGSize svSize = [self calculateScrollViewFrameSize];
-    return CGRectMake(0, 0, svSize.width, svSize.height);
-}
-
-- (BOOL)orientationConsideredAsPortrait:(UIInterfaceOrientation)orientation
-{
-    return UIInterfaceOrientationIsPortrait(orientation) || orientation == UIDeviceOrientationUnknown;
-}
-
-- (CGFloat)widthForView:(UIView *)view
-{
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    return ([self orientationConsideredAsPortrait:orientation]
-            ? view.frame.size.width
-            : view.frame.size.height);
-}
-
-- (CGFloat)heightForView:(UIView *)view
-{
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    return ([self orientationConsideredAsPortrait:orientation]
-            ? view.frame.size.height
-            : view.frame.size.width);
-}
+//- (void)fixActionSheetFrame
+//{
+//    CGSize frameSize = [self calculateFrameSize];
+//    CGRect frame = CGRectMake([self widthForView:self.presentingView]/2 - frameSize.width/2,
+//                              [self heightForView:self.presentingView] - frameSize.height,
+//                              frameSize.width,
+//                              frameSize.height);
+//    self.frame = frame;
+//}
+//
+//- (CGSize)calculateFrameSize
+//{
+//    CGSize svSize = [self calculateScrollViewFrameSize];
+//    CGFloat height = svSize.height + kYCHActionSheetButtonHeight + (kYCHActionSheetInterItemSpace*2);
+//    return CGSizeMake(svSize.width, height);
+//}
+//
+//- (CGSize)calculateScrollViewContentSize
+//{
+//    CGFloat height = 0;
+//    for (YCHActionSheetSection *section in _mutableSections)
+//    {
+//        if (section.title)
+//            height += kYCHActionSheetButtonHeight;
+//        
+//        height += (section.buttons.count * kYCHActionSheetButtonHeight);
+//        
+//        if (section != _mutableSections.lastObject)
+//            height += kYCHActionSheetInterItemSpace;
+//    }
+//    
+//    CGFloat width = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
+//    return CGSizeMake(width, height);
+//}
+//
+//- (CGSize)calculateScrollViewFrameSize
+//{
+//    CGFloat maxHeight = [self heightForView:self.presentingView] - kYCHActionSheetButtonHeight - (5*kYCHActionSheetInterItemSpace);
+//    CGSize contentSize = [self calculateScrollViewContentSize];
+//    CGFloat height = MIN(maxHeight, contentSize.height);
+//    
+//    return CGSizeMake(contentSize.width, height);
+//}
+//
+//- (CGRect)calculateScrollViewFrame
+//{
+//    CGSize svSize = [self calculateScrollViewFrameSize];
+//    return CGRectMake(0, 0, svSize.width, svSize.height);
+//}
+//
+//- (BOOL)orientationConsideredAsPortrait:(UIInterfaceOrientation)orientation
+//{
+//    return UIInterfaceOrientationIsPortrait(orientation) || orientation == UIDeviceOrientationUnknown;
+//}
+//
+//- (CGFloat)widthForView:(UIView *)view
+//{
+//    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+//    return ([self orientationConsideredAsPortrait:orientation]
+//            ? view.frame.size.width
+//            : view.frame.size.height);
+//}
+//
+//- (CGFloat)heightForView:(UIView *)view
+//{
+//    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+//    return ([self orientationConsideredAsPortrait:orientation]
+//            ? view.frame.size.height
+//            : view.frame.size.width);
+//}
 
 @end
 
