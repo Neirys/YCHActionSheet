@@ -37,8 +37,6 @@
 
 #define kYCHActionSheetDefaultBackgroundColor   [UIColor colorWithWhite:0.97 alpha:1.0]
 
-#warning TEST WHEN ADDING / REMOVING SECTION
-#warning ROUND BUTTON
 #warning FIGURE WHY THERE IS AN UGLY ANIMATION ON ROTATION
 
 static NSTimeInterval const kYCHActionSheetAnimationDuration  =   0.5;
@@ -228,6 +226,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 {
     _mutableSections = [sections mutableCopy];
     [_mutableSections makeObjectsPerformSelector:@selector(setActionSheet:) withObject:self];
+    [self setupSectionViews];
 }
 
 #pragma mark - Public methods
@@ -242,6 +241,8 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     
     [section performSelector:@selector(setActionSheet:) withObject:self];
     [_mutableSections addObject:section];
+    [self setupSectionViews];
+    
     return _mutableSections.count-1;
 }
 
@@ -333,7 +334,6 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 #pragma mark - Setup UI
 
-// FIXME: Replace all hard-coded button height by a constant ?
 - (void)setupBaseViews
 {
     // upper content view
@@ -346,7 +346,6 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     self.cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
     [_uv addSubview:self.cancelButton];
-    [self.cancelButton addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cancel(40)]" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
     [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
     [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
     [_uv layoutIfNeeded];
@@ -368,6 +367,9 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 - (void)setupSectionViews
 {
+    [_cv.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [_cv removeConstraints:_cv.constraints];
+    
     UIView *previousSection = nil;
     for (int i = 0; i < self.sections.count; i++)
     {
@@ -397,7 +399,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
         {
             section.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
             [sectionView addSubview:section.titleLabel];
-            [section.titleLabel addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[title(40)]" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
+            [section.titleLabel addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[title(45)]" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
             [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[title]|" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
             [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[title]" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
             previousButton = section.titleLabel;
@@ -411,7 +413,6 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
             button.buttonIndex = j;
             [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
             [sectionView addSubview:button];
-            [button addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[button(40)]" options:0 metrics:nil views:@{@"button":button}]];
             [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[button]|" options:0 metrics:nil views:@{@"button":button}]];
             
             if (!previousButton)
@@ -441,6 +442,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 {
     NSString *cancelTitle = self.cancelButtonTitle ?: @"Cancel";
     self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    self.cancelButton.contentEdgeInsets = UIEdgeInsetsMake(10, 0, 10, 0);
     [self.cancelButton setBackgroundColor:kYCHActionSheetDefaultBackgroundColor];
     NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:cancelTitle
                                                                      attributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:21.0]}];
@@ -650,6 +652,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     for (NSString *buttonTitle in _mutableButtonTitles)
     {
         YCHButton *button = [YCHButton buttonWithType:UIButtonTypeSystem];
+        button.contentEdgeInsets = UIEdgeInsetsMake(10, 0, 10, 0);
         button.showBottomLine = buttonTitle != _mutableButtonTitles.lastObject;
 
         NSMutableAttributedString *attributed = [[NSMutableAttributedString alloc] initWithString:buttonTitle
