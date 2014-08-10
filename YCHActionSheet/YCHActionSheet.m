@@ -338,7 +338,6 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 {
     // upper content view
     _uv = [UIView new];
-//    _uv.backgroundColor = [UIColor purpleColor];
     _uv.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_uv];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}]];
@@ -356,7 +355,6 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     _sv = [UIScrollView new];
     _sv.showsHorizontalScrollIndicator = NO;
     _sv.showsVerticalScrollIndicator = NO;
-//    _sv.backgroundColor = [UIColor redColor];
     _sv.translatesAutoresizingMaskIntoConstraints = NO;
     [_uv addSubview:_sv];
     [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[sv]|" options:0 metrics:nil views:@{@"sv":_sv}]];
@@ -365,7 +363,6 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     // add a scroll view's content view
     _cv = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
     _cv.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
-//    _cv.backgroundColor = [UIColor greenColor];
     [_sv addSubview:_cv];
 }
 
@@ -378,6 +375,8 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
         
         // create a section view + constraints
         UIView *sectionView = [UIView new];
+        sectionView.layer.cornerRadius = kYCHActionSheetItemCornerRadius;
+        sectionView.layer.masksToBounds = YES;
         sectionView.translatesAutoresizingMaskIntoConstraints = NO;
         [_cv addSubview:sectionView];
         [_cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[section]|" options:0 metrics:nil views:@{@"section":sectionView}]];
@@ -446,6 +445,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:cancelTitle
                                                                      attributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:21.0]}];
     [self.cancelButton setAttributedTitle:attributed forState:UIControlStateNormal];
+    self.cancelButton.layer.cornerRadius = kYCHActionSheetItemCornerRadius;
 }
 
 #pragma mark - Event handler methods
