@@ -38,10 +38,8 @@
 #define kYCHActionSheetDefaultBackgroundColor   [UIColor colorWithWhite:0.97 alpha:1.0]
 
 #warning TEST WHEN ADDING / REMOVING SECTION
-
-static CGFloat const kYCHActionSheetButtonHeight              =   44.0;
-static CGFloat const kYCHActionSheetInterItemSpace            =   10.0;
-static CGFloat const kYCHActionSheetHorizontalSpace           =   20.0;
+#warning ROUND BUTTON
+#warning FIGURE WHY THERE IS AN UGLY ANIMATION ON ROTATION
 
 static NSTimeInterval const kYCHActionSheetAnimationDuration  =   0.5;
 static CGFloat const kYCHActionSheetBackgroundLayerAlpha      =   0.4;
@@ -433,6 +431,9 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     }
     
     [_cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[last]|" options:0 metrics:nil views:@{@"last":previousSection}]];
+    
+    // this is technically useless here but will prevent from displaying endless constraints log messages
+    [self fixScrollViewContentSize];
 }
 
 - (void)setupCancelButton
