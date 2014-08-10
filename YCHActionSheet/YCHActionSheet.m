@@ -178,31 +178,26 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 #pragma mark - Life cycle methods
 
-// FIXME: Remove init (place code in initWith...) and throw exception if this method is used
 - (id)init
 {
     if (self = [super init])
     {
-        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.0];
-        self.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundWasTouched:)]];
-        
-        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+        NSAssert(false, @"Use -[%@] instead", NSStringFromSelector(@selector(initWithSections:cancelButtonTitle:delegate:)));
     }
     return self;
 }
 
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
-}
-
 - (instancetype)initWithSections:(NSArray *)sections cancelButtonTitle:(NSString *)cancelButtonTitle delegate:(id)delegate
 {
-    if (self = [self init])
+    if (self = [super init])
     {
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+        
+        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.0];
+        self.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundWasTouched:)]];
+        
         _mutableSections = [sections mutableCopy];
         [_mutableSections makeObjectsPerformSelector:@selector(setActionSheet:) withObject:self];
         _cancelButtonTitle = cancelButtonTitle;
@@ -213,6 +208,13 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
         [self setupSectionViews];
     }
     return self;
+}
+
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
 }
 
 #pragma mark - Custom getters / setters
