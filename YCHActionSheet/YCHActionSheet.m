@@ -37,8 +37,6 @@
 
 #define kYCHActionSheetDefaultBackgroundColor   [UIColor colorWithWhite:0.97 alpha:1.0]
 
-#warning FIGURE WHY THERE IS AN UGLY ANIMATION ON ROTATION
-
 static NSTimeInterval const kYCHActionSheetAnimationDuration  =   0.5;
 static CGFloat const kYCHActionSheetBackgroundLayerAlpha      =   0.4;
 static CGFloat const kYCHActionSheetItemCornerRadius          =   3.0;
@@ -397,12 +395,22 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
         UIView *previousButton = nil;
         if (section.titleLabel)
         {
+            // hack : wrap UILabel around an UIView to prevent the previous ugly animation during device rotation
+            UIView *titleView = [UIView new];
+            titleView.backgroundColor = kYCHActionSheetDefaultBackgroundColor;
+            titleView.translatesAutoresizingMaskIntoConstraints = NO;
+            [sectionView addSubview:titleView];
+            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[titleView(45)]" options:0 metrics:nil views:@{@"titleView":titleView}]];
+            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[titleView]|" options:0 metrics:nil views:@{@"titleView":titleView}]];
+            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[titleView]" options:0 metrics:nil views:@{@"titleView":titleView}]];
+            
             section.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-            [sectionView addSubview:section.titleLabel];
-            [section.titleLabel addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[title(45)]" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
-            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[title]|" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
-            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[title]" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
-            previousButton = section.titleLabel;
+            section.titleLabel.backgroundColor = [UIColor clearColor];
+            [titleView addSubview:section.titleLabel];
+            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[title]|" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
+            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[title]|" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
+            
+            previousButton = titleView;
         }
         
         for (int j = 0; j < section.buttons.count; j++)
