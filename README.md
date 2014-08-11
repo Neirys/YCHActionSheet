@@ -91,5 +91,8 @@ SOFTWARE.
 
 
 ## Release notes
+Version 1.0.1
+* Add `-[actionSheet:shouldDismissForButtonAtIndex:sectionIndex:]` delegate method (thanks @jacksonh)
+
 Version 1.0
 * Initial release
