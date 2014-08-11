@@ -65,8 +65,8 @@ then display it with :
 ```
 
 ## Improvements
-At this moment, there is an ugly animation happening during rotation where we can clearly see buttons being resized.
-I would appreciate if someone finds a way to remove this effect.
+UILabel seems to have a weird effect using Autolayout : it takes his final frame during the very beginning of his rotation animation, resulting in an ugly animation.
+I would appreciate if someone already found a fix for it.
 
 ## MIT License
 Copyright (c) 2014 Yaman JAIOUCH
@@ -91,6 +91,9 @@ SOFTWARE.
 
 
 ## Release notes
+Version 1.0.2
+* YCHActionSheet is now using fully using AutoLayout
+
 Version 1.0.1
 * Add `-[actionSheet:shouldDismissForButtonAtIndex:sectionIndex:]` delegate method (thanks @jacksonh)
 
