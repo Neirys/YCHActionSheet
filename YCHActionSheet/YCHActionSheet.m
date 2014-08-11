@@ -38,8 +38,8 @@
 #define kYCHActionSheetDefaultBackgroundColor   [UIColor colorWithWhite:0.97 alpha:1.0]
 
 static NSTimeInterval const kYCHActionSheetAnimationDuration  =   0.5;
-static CGFloat const kYCHActionSheetBackgroundLayerAlpha      =   0.4;
-static CGFloat const kYCHActionSheetItemCornerRadius          =   3.0;
+static CGFloat const kYCHActionSheetBackgroundAlpha           =   0.4;
+static CGFloat const kYCHActionSheetSectionCornerRadius       =   3.0;
 
 #pragma mark - Functions
 
@@ -63,44 +63,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     CGContextRestoreGState(context);
     CGGradientRelease(gradient);
 }
-
-#pragma mark - UIView categories
-
-typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
-    YCHRectCornerTop        =   UIRectCornerTopLeft | UIRectCornerTopRight,
-    YCHRectCornerBottom     =   UIRectCornerBottomLeft | UIRectCornerBottomRight,
-    YCHRectCornerAll        =   UIRectCornerAllCorners,
-};
-
-@interface UIView (YCHRoundedCorner)
-
-- (void)roundCorners:(YCHRectCorner)corners withRadius:(CGFloat)radius;
-- (void)roundCorners:(YCHRectCorner)corners;
-
-@end
-
-@implementation UIView (YCHRoundedCorner)
-
-- (CAShapeLayer *)roundedCornerShapeWithFrame:(CGRect)frame corners:(UIRectCorner)corners radius:(CGFloat)radius
-{
-    UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:frame byRoundingCorners:corners cornerRadii:CGSizeMake(radius, radius)];
-    CAShapeLayer *shape = [[CAShapeLayer alloc] init];
-    shape.frame = frame;
-    shape.path = path.CGPath;
-    return shape;
-}
-
-- (void)roundCorners:(YCHRectCorner)corners withRadius:(CGFloat)radius
-{
-    self.layer.mask = [self roundedCornerShapeWithFrame:self.bounds corners:(UIRectCorner)corners radius:radius];
-}
-
-- (void)roundCorners:(YCHRectCorner)corners
-{
-    [self roundCorners:corners withRadius:kYCHActionSheetItemCornerRadius];
-}
-
-@end
 
 #pragma mark - YCHButton class
 
@@ -257,6 +219,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     [view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[actionSheet]|" options:0 metrics:0 views:@{@"actionSheet":self}]];
     [view layoutIfNeeded];
     
+    // trigger delegate method willPresent
     if ([self.delegate respondsToSelector:@selector(willPresentActionSheet:)])
     {
         [self.delegate willPresentActionSheet:self];
@@ -269,13 +232,13 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     [self addConstraints:_offScreenConstraints];
     [self layoutIfNeeded];
     
-    // animate
+    // animate onscrenn
     [self removeConstraints:_offScreenConstraints];
     _onScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}];
     [self addConstraints:_onScreenConstraints];
     
     void (^animation)(void) = ^{
-        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:kYCHActionSheetBackgroundLayerAlpha];
+        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:kYCHActionSheetBackgroundAlpha];
         [self layoutIfNeeded];
     };
     
@@ -375,7 +338,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
         
         // create a section view + constraints
         UIView *sectionView = [UIView new];
-        sectionView.layer.cornerRadius = kYCHActionSheetItemCornerRadius;
+        sectionView.layer.cornerRadius = kYCHActionSheetSectionCornerRadius;
         sectionView.layer.masksToBounds = YES;
         sectionView.translatesAutoresizingMaskIntoConstraints = NO;
         [_cv addSubview:sectionView];
@@ -455,7 +418,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:cancelTitle
                                                                      attributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:21.0]}];
     [self.cancelButton setAttributedTitle:attributed forState:UIControlStateNormal];
-    self.cancelButton.layer.cornerRadius = kYCHActionSheetItemCornerRadius;
+    self.cancelButton.layer.cornerRadius = kYCHActionSheetSectionCornerRadius;
 }
 
 #pragma mark - Event handler methods
@@ -494,22 +457,6 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 }
 
 #pragma mark - Helper methods
-
-- (void)roundCornerButton:(YCHButton *)button inSection:(YCHActionSheetSection *)section
-{
-    if (section.buttons.count == 1)
-    {
-        [button roundCorners:YCHRectCornerAll];
-    }
-    else if (button == section.buttons.lastObject)
-    {
-        [button roundCorners:YCHRectCornerBottom];
-    }
-    else if (button == section.buttons.firstObject && !section.titleLabel)
-    {
-        [button roundCorners:YCHRectCornerTop];
-    }
-}
 
 - (void)fixScrollViewContentSize
 {

@@ -25,12 +25,6 @@
                                             <action selector="displayActionSheet:" destination="vXZ-lx-hvc" id="KQd-JI-lb2"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="zWd-6b-O0k"/>
-                                    <barButtonItem title="Normal sheet" id="L8y-9c-iOg">
-                                        <connections>
-                                            <action selector="displayNormalSheet:" destination="vXZ-lx-hvc" id="cdd-EQ-uqE"/>
-                                        </connections>
-                                    </barButtonItem>
                                 </items>
                             </toolbar>
                         </subviews>

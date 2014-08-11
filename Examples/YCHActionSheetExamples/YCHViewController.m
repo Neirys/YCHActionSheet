@@ -18,14 +18,9 @@
 
 @implementation YCHViewController
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-
 - (void)actionSheet:(YCHActionSheet *)actionSheet clickedButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex
 {
-    NSLog(@"%@ / %@", @(sectionIndex), @(buttonIndex));
+    NSLog(@"button clicked : %@ / %@", @(sectionIndex), @(buttonIndex));
 }
 
 - (void)actionSheetDidCancel:(YCHActionSheet *)actionSheet
@@ -53,15 +48,10 @@
     NSLog(@"did dismiss");
 }
 
-- (void)didReceiveMemoryWarning
+- (BOOL)actionSheet:(YCHActionSheet *)actionSheet shouldDismissForButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-- (IBAction)displayNormalSheet:(id)sender
-{
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"test" delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"test", nil];
-    [actionSheet showInView:self.view];
+    NSLog(@"should dismiss : %@ / %@", @(sectionIndex), @(buttonIndex));
+    return YES;
 }
 
 - (IBAction)displayActionSheet:(id)sender
@@ -69,16 +59,12 @@
     YCHActionSheetSection *section1 = [YCHActionSheetSection destructiveSectionWithTitle:@"Reset"];
     YCHActionSheetSection *section2 = [[YCHActionSheetSection alloc] initWithTitle:@"Compression"
                                                                  otherButtonTitles:@"75%", @"50%", @"25%", nil];
-    
     YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
                                                                  otherButtonTitles:@"90°", @"-90°", nil];
-//    YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
-//                                                                 otherButtonTitles:@"90°", @"-90°", @"test",@"test",@"test",@"test",@"test",@"test",@"test", nil];
     
     _actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3]
                                                          cancelButtonTitle:@"Cancel"
                                                                   delegate:self];
-
     [_actionSheet showInView:self.view];
 }
 
