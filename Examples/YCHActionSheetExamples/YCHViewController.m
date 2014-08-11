@@ -11,18 +11,16 @@
 #import "YCHActionSheet.h"
 
 @interface YCHViewController () <YCHActionSheetDelegate>
+{
+    YCHActionSheet *_actionSheet;
+}
 @end
 
 @implementation YCHViewController
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-
 - (void)actionSheet:(YCHActionSheet *)actionSheet clickedButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex
 {
-    NSLog(@"%@ / %@", @(sectionIndex), @(buttonIndex));
+    NSLog(@"button clicked : %@ / %@", @(sectionIndex), @(buttonIndex));
 }
 
 - (void)actionSheetDidCancel:(YCHActionSheet *)actionSheet
@@ -50,10 +48,10 @@
     NSLog(@"did dismiss");
 }
 
-- (void)didReceiveMemoryWarning
+- (BOOL)actionSheet:(YCHActionSheet *)actionSheet shouldDismissForButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    NSLog(@"should dismiss : %@ / %@", @(sectionIndex), @(buttonIndex));
+    return YES;
 }
 
 - (IBAction)displayActionSheet:(id)sender
@@ -63,11 +61,11 @@
                                                                  otherButtonTitles:@"75%", @"50%", @"25%", nil];
     YCHActionSheetSection *section3 = [[YCHActionSheetSection alloc] initWithTitle:@"Rotation"
                                                                  otherButtonTitles:@"90°", @"-90°", nil];
-    YCHActionSheet *actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3]
+    
+    _actionSheet = [[YCHActionSheet alloc] initWithSections:@[section1, section2, section3]
                                                          cancelButtonTitle:@"Cancel"
                                                                   delegate:self];
-
-    [actionSheet showInView:self.view];
+    [_actionSheet showInView:self.view];
 }
 
 @end

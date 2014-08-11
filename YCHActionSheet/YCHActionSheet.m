@@ -37,13 +37,9 @@
 
 #define kYCHActionSheetDefaultBackgroundColor   [UIColor colorWithWhite:0.97 alpha:1.0]
 
-static CGFloat const kYCHActionSheetButtonHeight              =   44.0;
-static CGFloat const kYCHActionSheetInterItemSpace            =   10.0;
-static CGFloat const kYCHActionSheetHorizontalSpace           =   20.0;
-
 static NSTimeInterval const kYCHActionSheetAnimationDuration  =   0.5;
-static CGFloat const kYCHActionSheetBackgroundLayerAlpha      =   0.4;
-static CGFloat const kYCHActionSheetItemCornerRadius          =   3.0;
+static CGFloat const kYCHActionSheetBackgroundAlpha           =   0.4;
+static CGFloat const kYCHActionSheetSectionCornerRadius       =   3.0;
 
 #pragma mark - Functions
 
@@ -67,44 +63,6 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     CGContextRestoreGState(context);
     CGGradientRelease(gradient);
 }
-
-#pragma mark - UIView categories
-
-typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
-    YCHRectCornerTop        =   UIRectCornerTopLeft | UIRectCornerTopRight,
-    YCHRectCornerBottom     =   UIRectCornerBottomLeft | UIRectCornerBottomRight,
-    YCHRectCornerAll        =   UIRectCornerAllCorners,
-};
-
-@interface UIView (YCHRoundedCorner)
-
-- (void)roundCorners:(YCHRectCorner)corners withRadius:(CGFloat)radius;
-- (void)roundCorners:(YCHRectCorner)corners;
-
-@end
-
-@implementation UIView (YCHRoundedCorner)
-
-- (CAShapeLayer *)roundedCornerShapeWithFrame:(CGRect)frame corners:(UIRectCorner)corners radius:(CGFloat)radius
-{
-    UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:frame byRoundingCorners:corners cornerRadii:CGSizeMake(radius, radius)];
-    CAShapeLayer *shape = [[CAShapeLayer alloc] init];
-    shape.frame = frame;
-    shape.path = path.CGPath;
-    return shape;
-}
-
-- (void)roundCorners:(YCHRectCorner)corners withRadius:(CGFloat)radius
-{
-    self.layer.mask = [self roundedCornerShapeWithFrame:self.bounds corners:(UIRectCorner)corners radius:radius];
-}
-
-- (void)roundCorners:(YCHRectCorner)corners
-{
-    [self roundCorners:corners withRadius:kYCHActionSheetItemCornerRadius];
-}
-
-@end
 
 #pragma mark - YCHButton class
 
@@ -159,16 +117,18 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 @interface YCHActionSheet ()
 {
     NSMutableArray *_mutableSections;
-    UIScrollView *_scrollView;
-    BOOL _willAnimate;
+    
+    UIView *_rv;
+    UIView *_uv;
+    UIScrollView *_sv;
+    UIView *_cv;
+    
+    NSArray *_offScreenConstraints;
+    NSArray *_onScreenConstraints;
 }
 
 @property (assign, nonatomic, readwrite, getter = isVisible) BOOL visible;
-
 @property (strong, nonatomic, readwrite) UIButton *cancelButton;
-@property (strong, nonatomic) UIView *backgroundLayerView;
-
-@property (weak, nonatomic) UIView *presentingView;
 
 @end
 
@@ -180,32 +140,39 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 {
     if (self = [super init])
     {
-        self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-        _scrollView = [[UIScrollView alloc] init];
-        _scrollView.showsHorizontalScrollIndicator = NO;
-        _scrollView.showsVerticalScrollIndicator = NO;
-        [self addSubview:_scrollView];
+        NSAssert(false, @"Use -[%@] instead", NSStringFromSelector(@selector(initWithSections:cancelButtonTitle:delegate:)));
     }
     return self;
 }
 
 - (instancetype)initWithSections:(NSArray *)sections cancelButtonTitle:(NSString *)cancelButtonTitle delegate:(id)delegate
 {
-    if (self = [self init])
+    if (self = [super init])
     {
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+        
+        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.0];
+        self.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundWasTouched:)]];
+        
         _mutableSections = [sections mutableCopy];
         [_mutableSections makeObjectsPerformSelector:@selector(setActionSheet:) withObject:self];
         _cancelButtonTitle = cancelButtonTitle;
         _delegate = delegate;
         
         [self setupCancelButton];
+        [self setupBaseViews];
+        [self setupSectionViews];
     }
     return self;
 }
 
-- (void)layoutSubviews
+
+- (void)dealloc
 {
-    [self setupUI];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
 }
 
 #pragma mark - Custom getters / setters
@@ -218,22 +185,8 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 - (void)setSections:(NSArray *)sections
 {
     _mutableSections = [sections mutableCopy];
-}
-
-- (UIView *)backgroundLayerView
-{
-    if (_backgroundLayerView)
-        return _backgroundLayerView;
-    
-    _backgroundLayerView = [[UIView alloc] init];
-    _backgroundLayerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    _backgroundLayerView.backgroundColor = [UIColor blackColor];
-    _backgroundLayerView.opaque = YES;
-    _backgroundLayerView.alpha = 0;
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundLayerWasTouched:)];
-    [_backgroundLayerView addGestureRecognizer:tap];
-    
-    return _backgroundLayerView;
+    [_mutableSections makeObjectsPerformSelector:@selector(setActionSheet:) withObject:self];
+    [self setupSectionViews];
 }
 
 #pragma mark - Public methods
@@ -248,6 +201,8 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     
     [section performSelector:@selector(setActionSheet:) withObject:self];
     [_mutableSections addObject:section];
+    [self setupSectionViews];
+    
     return _mutableSections.count-1;
 }
 
@@ -258,34 +213,38 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
 
 - (void)showInView:(UIView *)view
 {
-    _willAnimate = YES;
-    self.visible = YES;
-    self.presentingView = view;
-    
-    [self prepareUI];
-
-    // setup initial frame
-    CGFloat startY = view.bounds.origin.y + [self heightForView:view];
-    CGSize size = [self calculateFrameSize];
-    self.frame = CGRectMake([self widthForView:view]/2 - size.width/2, startY, size.width, size.height);
+    // add self to presenting view and setup constraint
     [view addSubview:self];
+    [view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[actionSheet]|" options:0 metrics:0 views:@{@"actionSheet":self}]];
+    [view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[actionSheet]|" options:0 metrics:0 views:@{@"actionSheet":self}]];
+    [view layoutIfNeeded];
     
-    // add an opaque background layer
-    self.backgroundLayerView.frame = view.bounds;
-    [view insertSubview:self.backgroundLayerView belowSubview:self];
-    
+    // trigger delegate method willPresent
     if ([self.delegate respondsToSelector:@selector(willPresentActionSheet:)])
     {
         [self.delegate willPresentActionSheet:self];
     }
     
+    // position action sheet offscreen
+    CGFloat viewHeight = self.frame.size.height;
+    NSString *vfl = [NSString stringWithFormat:@"V:|-(%f)-[uv]-(%f)-|", viewHeight, -viewHeight];
+    _offScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:vfl options:0 metrics:nil views:@{@"uv":_uv}];
+    [self addConstraints:_offScreenConstraints];
+    [self layoutIfNeeded];
+    
+    // animate onscrenn
+    [self removeConstraints:_offScreenConstraints];
+    _onScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}];
+    [self addConstraints:_onScreenConstraints];
+    
     void (^animation)(void) = ^{
-        self.frame = CGRectOffset(self.frame, 0, - self.frame.size.height);
-        self.backgroundLayerView.alpha = kYCHActionSheetBackgroundLayerAlpha;
+        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:kYCHActionSheetBackgroundAlpha];
+        [self layoutIfNeeded];
     };
     
     void (^completion)(BOOL finished) = ^(BOOL finished) {
-        _willAnimate = NO;
+        self.visible = YES;
+        
         if ([self.delegate respondsToSelector:@selector(didPresentActionSheet:)])
         {
             [self.delegate didPresentActionSheet:self];
@@ -293,26 +252,29 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     };
     
     [UIView animateWithDuration:kYCHActionSheetAnimationDuration delay:0.0 usingSpringWithDamping:1 initialSpringVelocity:0 options:0 animations:animation completion:completion];
+
+    // calculate and setup content view frame + scroll view content size
+    [_sv layoutIfNeeded];
+    [self fixScrollViewContentSize];
 }
 
 - (void)dismiss
 {
-    _willAnimate = YES;
-    
     if ([self.delegate respondsToSelector:@selector(willDismissActionSheet:)])
     {
         [self.delegate willDismissActionSheet:self];
     }
     
+    [self removeConstraints:_onScreenConstraints];
+    [self addConstraints:_offScreenConstraints];
+    
     void (^animation)(void) = ^{
-        self.frame = CGRectOffset(self.frame, 0, self.frame.size.height);
-        self.backgroundLayerView.alpha = 0.0;
+        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.0];
+        [self layoutIfNeeded];
     };
     
     void (^completion)(BOOL finished) = ^(BOOL finished) {
-        _willAnimate = NO;
         self.visible = NO;
-        [self.backgroundLayerView removeFromSuperview];
         [self removeFromSuperview];
         
         if ([self.delegate respondsToSelector:@selector(didDismissActionSheet:)])
@@ -324,87 +286,139 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     [UIView animateWithDuration:kYCHActionSheetAnimationDuration delay:0.0 usingSpringWithDamping:1 initialSpringVelocity:0 options:0 animations:animation completion:completion];
 }
 
-#pragma mark - Setup UI methods
+#pragma mark - Notification handlers
 
-- (void)prepareUI
+- (void)orientationDidChange:(NSNotification *)note
 {
+    [self fixScrollViewContentSize];
+}
+
+#pragma mark - Setup UI
+
+- (void)setupBaseViews
+{
+    // upper content view
+    _uv = [UIView new];
+    _uv.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:_uv];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}]];
+    
+    // position cancel button
+    self.cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
+    [_uv addSubview:self.cancelButton];
+    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
+    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
+    [_uv layoutIfNeeded];
+    
+    // add a scrollView
+    _sv = [UIScrollView new];
+    _sv.showsHorizontalScrollIndicator = NO;
+    _sv.showsVerticalScrollIndicator = NO;
+    _sv.translatesAutoresizingMaskIntoConstraints = NO;
+    [_uv addSubview:_sv];
+    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[sv]|" options:0 metrics:nil views:@{@"sv":_sv}]];
+    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sv]-10-[cancel]" options:0 metrics:nil views:@{@"sv":_sv, @"cancel":self.cancelButton}]];
+    
+    // add a scroll view's content view
+    _cv = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
+    _cv.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
+    [_sv addSubview:_cv];
+}
+
+- (void)setupSectionViews
+{
+    [_cv.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [_cv removeConstraints:_cv.constraints];
+    
+    UIView *previousSection = nil;
     for (int i = 0; i < self.sections.count; i++)
     {
         YCHActionSheetSection *section = self.sections[i];
         
+        // create a section view + constraints
+        UIView *sectionView = [UIView new];
+        sectionView.layer.cornerRadius = kYCHActionSheetSectionCornerRadius;
+        sectionView.layer.masksToBounds = YES;
+        sectionView.translatesAutoresizingMaskIntoConstraints = NO;
+        [_cv addSubview:sectionView];
+        [_cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[section]|" options:0 metrics:nil views:@{@"section":sectionView}]];
+        
+        if (!previousSection)
+        {
+            [_cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[section]" options:0 metrics:nil views:@{@"section":sectionView}]];
+        }
+        else
+        {
+            [_cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[previous]-10-[section]" options:0 metrics:nil views:@{@"previous":previousSection, @"section":sectionView}]];
+        }
+        
+        // add buttons' section + constraints
+        
+        UIView *previousButton = nil;
         if (section.titleLabel)
         {
-            [_scrollView addSubview:section.titleLabel];
+            // hack : wrap UILabel around an UIView to prevent the previous ugly animation during device rotation
+            UIView *titleView = [UIView new];
+            titleView.backgroundColor = kYCHActionSheetDefaultBackgroundColor;
+            titleView.translatesAutoresizingMaskIntoConstraints = NO;
+            [sectionView addSubview:titleView];
+            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[titleView(45)]" options:0 metrics:nil views:@{@"titleView":titleView}]];
+            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[titleView]|" options:0 metrics:nil views:@{@"titleView":titleView}]];
+            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[titleView]" options:0 metrics:nil views:@{@"titleView":titleView}]];
+            
+            section.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+            section.titleLabel.backgroundColor = [UIColor clearColor];
+            [titleView addSubview:section.titleLabel];
+            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[title]|" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
+            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[title]|" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
+            
+            previousButton = titleView;
         }
-
+        
         for (int j = 0; j < section.buttons.count; j++)
         {
             YCHButton *button = section.buttons[j];
+            button.translatesAutoresizingMaskIntoConstraints = NO;
             button.sectionIndex = i;
             button.buttonIndex = j;
             [button addTarget:self action:@selector(buttonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
-            [_scrollView addSubview:button];
-        }
-    }
-    
-    if (self.cancelButton)
-    {
-        [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
-        [self addSubview:self.cancelButton];
-    }
-}
-
-- (void)setupUI
-{
-    // setup scrollView frame and contentSize
-    _scrollView.frame = [self calculateScrollViewFrame];
-    _scrollView.contentSize = [self calculateScrollViewContentSize];
-    
-    // in case of rotation, fix action sheet frame
-    if (!_willAnimate)
-    {
-        [self fixActionSheetFrame];
-    }
-    
-    // setup action sheet view
-    CGFloat offsetY = 0;
-    CGFloat buttonWidth = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
-    for (YCHActionSheetSection *section in self.sections)
-    {
-        if (section.titleLabel)
-        {
-            section.titleLabel.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
-            [section.titleLabel roundCorners:YCHRectCornerTop];
+            [sectionView addSubview:button];
+            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[button]|" options:0 metrics:nil views:@{@"button":button}]];
             
-            offsetY += kYCHActionSheetButtonHeight;
+            if (!previousButton)
+            {
+                [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[button]" options:0 metrics:nil views:@{@"button":button}]];
+            }
+            else
+            {
+                [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[previous][button]" options:0 metrics:nil views:@{@"previous":previousButton, @"button":button}]];
+            }
+            
+            previousButton = button;
         }
         
-        for (YCHButton *button in section.buttons)
-        {
-            button.frame = CGRectMake(0, offsetY, buttonWidth, kYCHActionSheetButtonHeight);
-            [self roundCornerButton:button inSection:section];
-            
-            offsetY += kYCHActionSheetButtonHeight;
-        }
+        [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[last]|" options:0 metrics:nil views:@{@"last":previousButton}]];
         
-        offsetY += kYCHActionSheetInterItemSpace;
+        previousSection = sectionView;
     }
     
-    if (self.cancelButton)
-    {
-        self.cancelButton.frame = CGRectMake(0, _scrollView.frame.size.height + kYCHActionSheetInterItemSpace, buttonWidth, kYCHActionSheetButtonHeight);
-        [self.cancelButton roundCorners:YCHRectCornerAll];
-    }
+    [_cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[last]|" options:0 metrics:nil views:@{@"last":previousSection}]];
+    
+    // this is technically useless here but will prevent from displaying endless constraints log messages
+    [self fixScrollViewContentSize];
 }
 
 - (void)setupCancelButton
 {
     NSString *cancelTitle = self.cancelButtonTitle ?: @"Cancel";
     self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    self.cancelButton.contentEdgeInsets = UIEdgeInsetsMake(10, 0, 10, 0);
     [self.cancelButton setBackgroundColor:kYCHActionSheetDefaultBackgroundColor];
     NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:cancelTitle
                                                                      attributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:21.0]}];
     [self.cancelButton setAttributedTitle:attributed forState:UIControlStateNormal];
+    self.cancelButton.layer.cornerRadius = kYCHActionSheetSectionCornerRadius;
 }
 
 #pragma mark - Event handler methods
@@ -437,98 +451,23 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     [self dismiss];
 }
 
-- (void)backgroundLayerWasTouched:(UIGestureRecognizer *)gesture
+- (void)backgroundWasTouched:(UIGestureRecognizer *)gesture
 {
     [self dismiss];
 }
 
 #pragma mark - Helper methods
 
-- (void)roundCornerButton:(YCHButton *)button inSection:(YCHActionSheetSection *)section
+- (void)fixScrollViewContentSize
 {
-    if (section.buttons.count == 1)
-    {
-        [button roundCorners:YCHRectCornerAll];
-    }
-    else if (button == section.buttons.lastObject)
-    {
-        [button roundCorners:YCHRectCornerBottom];
-    }
-    else if (button == section.buttons.firstObject && !section.titleLabel)
-    {
-        [button roundCorners:YCHRectCornerTop];
-    }
-}
-
-- (void)fixActionSheetFrame
-{
-    CGSize frameSize = [self calculateFrameSize];
-    CGRect frame = CGRectMake([self widthForView:self.presentingView]/2 - frameSize.width/2,
-                              [self heightForView:self.presentingView] - frameSize.height,
-                              frameSize.width,
-                              frameSize.height);
-    self.frame = frame;
-}
-
-- (CGSize)calculateFrameSize
-{
-    CGSize svSize = [self calculateScrollViewFrameSize];
-    CGFloat height = svSize.height + kYCHActionSheetButtonHeight + (kYCHActionSheetInterItemSpace*2);
-    return CGSizeMake(svSize.width, height);
-}
-
-- (CGSize)calculateScrollViewContentSize
-{
-    CGFloat height = 0;
-    for (YCHActionSheetSection *section in _mutableSections)
-    {
-        if (section.title)
-            height += kYCHActionSheetButtonHeight;
-        
-        height += (section.buttons.count * kYCHActionSheetButtonHeight);
-        
-        if (section != _mutableSections.lastObject)
-            height += kYCHActionSheetInterItemSpace;
-    }
+    CGSize theoricSize = [_cv systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+    CGRect contentViewFrame = _cv.frame;
+    contentViewFrame.size = CGSizeMake(_sv.frame.size.width, theoricSize.height);
+    CGFloat offsetY = _sv.frame.size.height - MIN(contentViewFrame.size.height, _sv.frame.size.height);
+    contentViewFrame.origin = CGPointMake(0, offsetY);
+    _cv.frame = contentViewFrame;
     
-    CGFloat width = [self widthForView:self.presentingView] - kYCHActionSheetHorizontalSpace;
-    return CGSizeMake(width, height);
-}
-
-- (CGSize)calculateScrollViewFrameSize
-{
-    CGFloat maxHeight = [self heightForView:self.presentingView] - kYCHActionSheetButtonHeight - (5*kYCHActionSheetInterItemSpace);
-    CGSize contentSize = [self calculateScrollViewContentSize];
-    CGFloat height = MIN(maxHeight, contentSize.height);
-    
-    return CGSizeMake(contentSize.width, height);
-}
-
-- (CGRect)calculateScrollViewFrame
-{
-    CGSize svSize = [self calculateScrollViewFrameSize];
-    return CGRectMake(0, 0, svSize.width, svSize.height);
-}
-
-- (BOOL)orientationConsideredAsPortrait:(UIInterfaceOrientation)orientation
-{
-    return UIInterfaceOrientationIsPortrait(orientation) || orientation == UIDeviceOrientationUnknown;
-}
-
-- (CGFloat)widthForView:(UIView *)view
-{
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    return ([self orientationConsideredAsPortrait:orientation]
-            ? view.frame.size.width
-            : view.frame.size.height);
-}
-
-- (CGFloat)heightForView:(UIView *)view
-{
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    return ([self orientationConsideredAsPortrait:orientation]
-            ? view.frame.size.height
-            : view.frame.size.width);
+    _sv.contentSize = _cv.frame.size;
 }
 
 @end
@@ -668,6 +607,7 @@ typedef NS_OPTIONS(NSUInteger, YCHRectCorner) {
     for (NSString *buttonTitle in _mutableButtonTitles)
     {
         YCHButton *button = [YCHButton buttonWithType:UIButtonTypeSystem];
+        button.contentEdgeInsets = UIEdgeInsetsMake(10, 0, 10, 0);
         button.showBottomLine = buttonTitle != _mutableButtonTitles.lastObject;
 
         NSMutableAttributedString *attributed = [[NSMutableAttributedString alloc] initWithString:buttonTitle
