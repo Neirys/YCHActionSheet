@@ -118,10 +118,10 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 {
     NSMutableArray *_mutableSections;
     
-    UIView *_rv;
-    UIView *_uv;
-    UIScrollView *_sv;
-    UIView *_cv;
+    UIView *_rootView;
+    UIView *_upperView;
+    UIScrollView *_scrollView;
+    UIView *_contentView;
     
     NSArray *_offScreenConstraints;
     NSArray *_onScreenConstraints;
@@ -150,7 +150,10 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     if (self = [super init])
     {
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(orientationDidChange:)
+                                                     name:UIDeviceOrientationDidChangeNotification
+                                                   object:nil];
         
         self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.0];
         self.translatesAutoresizingMaskIntoConstraints = NO;
@@ -228,13 +231,13 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     // position action sheet offscreen
     CGFloat viewHeight = self.frame.size.height;
     NSString *vfl = [NSString stringWithFormat:@"V:|-(%f)-[uv]-(%f)-|", viewHeight, -viewHeight];
-    _offScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:vfl options:0 metrics:nil views:@{@"uv":_uv}];
+    _offScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:vfl options:0 metrics:nil views:@{@"uv":_upperView}];
     [self addConstraints:_offScreenConstraints];
     [self layoutIfNeeded];
     
     // animate onscrenn
     [self removeConstraints:_offScreenConstraints];
-    _onScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}];
+    _onScreenConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_upperView}];
     [self addConstraints:_onScreenConstraints];
     
     void (^animation)(void) = ^{
@@ -254,7 +257,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     [UIView animateWithDuration:kYCHActionSheetAnimationDuration delay:0.0 usingSpringWithDamping:1 initialSpringVelocity:0 options:0 animations:animation completion:completion];
 
     // calculate and setup content view frame + scroll view content size
-    [_sv layoutIfNeeded];
+    [_scrollView layoutIfNeeded];
     [self fixScrollViewContentSize];
 }
 
@@ -298,38 +301,38 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 - (void)setupBaseViews
 {
     // upper content view
-    _uv = [UIView new];
-    _uv.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:_uv];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(10@750)-[uv]-(10@750)-|" options:0 metrics:nil views:@{@"uv":_uv}]];
+    _upperView = [UIView new];
+    _upperView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:_upperView];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(10@750)-[uv]-(10@750)-|" options:0 metrics:nil views:@{@"uv":_upperView}]];
     
     // position cancel button
     self.cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.cancelButton addTarget:self action:@selector(cancelButtonWasTouched:) forControlEvents:UIControlEventTouchUpInside];
-    [_uv addSubview:self.cancelButton];
-    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
-    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
-    [_uv layoutIfNeeded];
+    [_upperView addSubview:self.cancelButton];
+    [_upperView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
+    [_upperView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[cancel]|" options:0 metrics:nil views:@{@"cancel":self.cancelButton}]];
+    [_upperView layoutIfNeeded];
     
     // add a scrollView
-    _sv = [UIScrollView new];
-    _sv.showsHorizontalScrollIndicator = NO;
-    _sv.showsVerticalScrollIndicator = NO;
-    _sv.translatesAutoresizingMaskIntoConstraints = NO;
-    [_uv addSubview:_sv];
-    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[sv]|" options:0 metrics:nil views:@{@"sv":_sv}]];
-    [_uv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sv]-10-[cancel]" options:0 metrics:nil views:@{@"sv":_sv, @"cancel":self.cancelButton}]];
+    _scrollView = [UIScrollView new];
+    _scrollView.showsHorizontalScrollIndicator = NO;
+    _scrollView.showsVerticalScrollIndicator = NO;
+    _scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    [_upperView addSubview:_scrollView];
+    [_upperView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[sv]|" options:0 metrics:nil views:@{@"sv":_scrollView}]];
+    [_upperView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sv]-10-[cancel]" options:0 metrics:nil views:@{@"sv":_scrollView, @"cancel":self.cancelButton}]];
     
     // add a scroll view's content view
-    _cv = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
-    _cv.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
-    [_sv addSubview:_cv];
+    _contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
+    _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
+    [_scrollView addSubview:_contentView];
 }
 
 - (void)setupSectionViews
 {
-    [_cv.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    [_cv removeConstraints:_cv.constraints];
+    [_contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [_contentView removeConstraints:_contentView.constraints];
     
     UIView *previousSection = nil;
     for (int i = 0; i < self.sections.count; i++)
@@ -341,16 +344,19 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
         sectionView.layer.cornerRadius = kYCHActionSheetSectionCornerRadius;
         sectionView.layer.masksToBounds = YES;
         sectionView.translatesAutoresizingMaskIntoConstraints = NO;
-        [_cv addSubview:sectionView];
-        [_cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[section]|" options:0 metrics:nil views:@{@"section":sectionView}]];
+        [_contentView addSubview:sectionView];
+        [_contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[section]|"
+                                                                             options:0
+                                                                             metrics:nil
+                                                                               views:@{@"section":sectionView}]];
         
         if (!previousSection)
         {
-            [_cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[section]" options:0 metrics:nil views:@{@"section":sectionView}]];
+            [_contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[section]" options:0 metrics:nil views:@{@"section":sectionView}]];
         }
         else
         {
-            [_cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[previous]-10-[section]" options:0 metrics:nil views:@{@"previous":previousSection, @"section":sectionView}]];
+            [_contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[previous]-10-[section]" options:0 metrics:nil views:@{@"previous":previousSection, @"section":sectionView}]];
         }
         
         // add buttons' section + constraints
@@ -363,15 +369,29 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
             titleView.backgroundColor = kYCHActionSheetDefaultBackgroundColor;
             titleView.translatesAutoresizingMaskIntoConstraints = NO;
             [sectionView addSubview:titleView];
-            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[titleView(45)]" options:0 metrics:nil views:@{@"titleView":titleView}]];
-            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[titleView]|" options:0 metrics:nil views:@{@"titleView":titleView}]];
-            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[titleView]" options:0 metrics:nil views:@{@"titleView":titleView}]];
+            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[titleView(45)]"
+                                                                              options:0 metrics:nil
+                                                                                views:@{@"titleView":titleView}]];
+            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[titleView]|"
+                                                                                options:0
+                                                                                metrics:nil
+                                                                                  views:@{@"titleView":titleView}]];
+            [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[titleView]"
+                                                                                options:0
+                                                                                metrics:nil
+                                                                                  views:@{@"titleView":titleView}]];
             
             section.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
             section.titleLabel.backgroundColor = [UIColor clearColor];
             [titleView addSubview:section.titleLabel];
-            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[title]|" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
-            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[title]|" options:0 metrics:nil views:@{@"title":section.titleLabel}]];
+            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[title]|"
+                                                                              options:0
+                                                                              metrics:nil
+                                                                                views:@{@"title":section.titleLabel}]];
+            [titleView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[title]|"
+                                                                              options:0
+                                                                              metrics:nil
+                                                                                views:@{@"title":section.titleLabel}]];
             
             previousButton = titleView;
         }
@@ -388,11 +408,17 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
             
             if (!previousButton)
             {
-                [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[button]" options:0 metrics:nil views:@{@"button":button}]];
+                [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[button]"
+                                                                                    options:0
+                                                                                    metrics:nil
+                                                                                      views:@{@"button":button}]];
             }
             else
             {
-                [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[previous][button]" options:0 metrics:nil views:@{@"previous":previousButton, @"button":button}]];
+                [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[previous][button]"
+                                                                                    options:0
+                                                                                    metrics:nil
+                                                                                      views:@{@"previous":previousButton, @"button":button}]];
             }
             
             previousButton = button;
@@ -403,7 +429,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
         previousSection = sectionView;
     }
     
-    [_cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[last]|" options:0 metrics:nil views:@{@"last":previousSection}]];
+    [_contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[last]|" options:0 metrics:nil views:@{@"last":previousSection}]];
     
     // this is technically useless here but will prevent from displaying endless constraints log messages
     [self fixScrollViewContentSize];
@@ -460,14 +486,14 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 - (void)fixScrollViewContentSize
 {
-    CGSize theoricSize = [_cv systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
-    CGRect contentViewFrame = _cv.frame;
-    contentViewFrame.size = CGSizeMake(_sv.frame.size.width, theoricSize.height);
-    CGFloat offsetY = _sv.frame.size.height - MIN(contentViewFrame.size.height, _sv.frame.size.height);
+    CGSize theoricSize = [_contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+    CGRect contentViewFrame = _contentView.frame;
+    contentViewFrame.size = CGSizeMake(_scrollView.frame.size.width, theoricSize.height);
+    CGFloat offsetY = _scrollView.frame.size.height - MIN(contentViewFrame.size.height, _scrollView.frame.size.height);
     contentViewFrame.origin = CGPointMake(0, offsetY);
-    _cv.frame = contentViewFrame;
+    _contentView.frame = contentViewFrame;
     
-    _sv.contentSize = _cv.frame.size;
+    _scrollView.contentSize = _contentView.frame.size;
 }
 
 @end
