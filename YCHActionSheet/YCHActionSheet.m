@@ -301,7 +301,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     _uv = [UIView new];
     _uv.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_uv];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[uv]-10-|" options:0 metrics:nil views:@{@"uv":_uv}]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(10@750)-[uv]-(10@750)-|" options:0 metrics:nil views:@{@"uv":_uv}]];
     
     // position cancel button
     self.cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
