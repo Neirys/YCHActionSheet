@@ -424,12 +424,22 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
             previousButton = button;
         }
         
-        [sectionView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[last]|" options:0 metrics:nil views:@{@"last":previousButton}]];
+        if (previousButton)
+        {
+            [sectionView addConstraints:
+             [NSLayoutConstraint constraintsWithVisualFormat:@"V:[last]|" options:0 metrics:nil views:@{@"last":previousButton}]
+             ];
+        }
         
         previousSection = sectionView;
     }
     
-    [_contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[last]|" options:0 metrics:nil views:@{@"last":previousSection}]];
+    if (previousSection)
+    {
+        [_contentView addConstraints:
+         [NSLayoutConstraint constraintsWithVisualFormat:@"V:[last]|" options:0 metrics:nil views:@{@"last":previousSection}]
+         ];
+    }
     
     // this is technically useless here but will prevent from displaying endless constraints log messages
     [self fixScrollViewContentSize];
