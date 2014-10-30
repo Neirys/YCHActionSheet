@@ -32,7 +32,7 @@
 
 #import "YCHActionSheet.h"
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Static values
 
 #define kYCHActionSheetDefaultBackgroundColor   [UIColor colorWithWhite:0.97 alpha:1.0]
@@ -55,7 +55,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     CGColorSpaceRelease(baseSpace), baseSpace = NULL;
     
     CGPoint startCenter = CGPointMake(rect.size.width/2, rect.origin.y + rect.size.height - width);
-
+    
     CGContextSaveGState(context);
     CGContextAddRect(context, CGRectMake(rect.origin.x, rect.origin.y + rect.size.height - width, rect.size.width, width));
     CGContextClip(context);
@@ -71,6 +71,8 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 @property (assign, nonatomic) NSUInteger sectionIndex;
 @property (assign, nonatomic) NSUInteger buttonIndex;
 @property (assign, nonatomic) BOOL showBottomLine;
+
+@property (nonatomic, assign) BOOL disabled;
 
 @end
 
@@ -91,6 +93,12 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 {
     _showBottomLine = showBottomLine;
     [self setNeedsDisplay];
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    if(!_disabled){
+      [super touchesBegan:touches withEvent:event];
+    }
 }
 
 @end
@@ -255,7 +263,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     };
     
     [UIView animateWithDuration:kYCHActionSheetAnimationDuration delay:0.0 usingSpringWithDamping:1 initialSpringVelocity:0 options:0 animations:animation completion:completion];
-
+    
     // calculate and setup content view frame + scroll view content size
     [_scrollView layoutIfNeeded];
     [self fixScrollViewContentSize];
@@ -466,15 +474,16 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     {
         [self.delegate actionSheet:self clickedButtonAtIndex:button.buttonIndex sectionIndex:button.sectionIndex];
     }
-
+    
     BOOL shouldDismiss = YES;
     if ([self.delegate respondsToSelector:@selector(actionSheet:shouldDismissForButtonAtIndex:sectionIndex:)])
-	{
+    {
         shouldDismiss = [self.delegate actionSheet:self shouldDismissForButtonAtIndex:button.buttonIndex sectionIndex:button.sectionIndex];
     }
-
-    if (shouldDismiss)
+    
+    if (shouldDismiss && button.disabled != YES){
         [self dismiss];
+    }
 }
 
 - (void)cancelButtonWasTouched:(id)sender
@@ -487,8 +496,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     [self dismiss];
 }
 
-- (void)backgroundWasTouched:(UIGestureRecognizer *)gesture
-{
+- (void)backgroundWasTouched:(UIGestureRecognizer *)gesture {
     [self dismiss];
 }
 
@@ -521,6 +529,10 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 @property (strong, nonatomic, readwrite) YCHLabel *titleLabel;
 @property (assign, nonatomic, readwrite, getter = isDestructiveSection) BOOL destructiveSection;
 
+@property (nonatomic, strong) UIFont *buttonFont;
+@property (nonatomic, strong) UIColor *normalButtonStateColor;
+@property (nonatomic, strong) UIColor *disabledButtonStateColor;
+
 @end
 
 @implementation YCHActionSheetSection
@@ -533,18 +545,20 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     {
         _title = title;
         _destructiveSection = destructive;
-        
         _mutableButtonTitles = [NSMutableArray array];
         for (NSString *arg = firstButtonTitle; arg != nil; arg = va_arg(otherButtonTitles, NSString *))
         {
             [_mutableButtonTitles addObject:arg];
         }
         
+        [self setUpButtonElements];
+        
         [self setupTitleLabel];
         [self setupButtons];
     }
     return self;
 }
+
 
 - (instancetype)initWithTitle:(NSString *)title destructive:(BOOL)destructive otherButtonTitles:(NSString *)otherButtonTitles, ...
 {
@@ -602,6 +616,41 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     return [_mutableButtons copy];
 }
 
+#pragma mark - Private Methods
+- (void)setEnabledStateForButton:(YCHButton *)button{
+    //set enabled button atributes
+    NSMutableDictionary *enabledAtributes = [NSMutableDictionary dictionaryWithDictionary:@{NSFontAttributeName:_buttonFont}];
+    if(_normalButtonStateColor != nil){
+        [enabledAtributes setObject:_normalButtonStateColor forKey:NSForegroundColorAttributeName];
+    }
+    NSMutableAttributedString *attributedTextEnabled = [[NSMutableAttributedString alloc] initWithString:button.titleLabel.text
+                                                                                              attributes:enabledAtributes];
+    [button setAttributedTitle:attributedTextEnabled forState:UIControlStateNormal];
+}
+
+- (void)setDisabledStateForButton:(YCHButton *)button{
+    //set disabled button atributes
+    NSMutableDictionary *disabledAtributes = [NSMutableDictionary dictionaryWithDictionary:@{NSFontAttributeName:_buttonFont}];
+    if(_disabledButtonStateColor != nil){
+        [disabledAtributes setObject:_disabledButtonStateColor forKey:NSForegroundColorAttributeName];
+    } else {
+        //set default color to light gray if no color is set
+        [disabledAtributes setObject:[UIColor lightGrayColor] forKey:NSForegroundColorAttributeName];
+    }
+    NSMutableAttributedString *attributedTextDisabled = [[NSMutableAttributedString alloc] initWithString:button.titleLabel.text
+                                                                                               attributes:disabledAtributes];
+    [button setAttributedTitle:attributedTextDisabled forState:UIControlStateNormal];
+}
+- (YCHButton *)getButtonAtIndex:(NSInteger )index{
+    YCHButton *button = nil;
+    if([_mutableButtons count] > index){
+        if([ _mutableButtons[index]isKindOfClass:[UIButton class]]){
+            button =  _mutableButtons[index];
+        }
+    }
+    return button;
+}
+
 #pragma mark - Public methods
 
 - (NSInteger)addButtonWithTitle:(NSString *)title
@@ -622,7 +671,28 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     return _mutableButtonTitles[index];
 }
 
+//enable or disable a button at a specific index
+- (void)setEnabled:(BOOL)enabled buttonAtIndex:(NSInteger)index{
+    YCHButton *button = [self getButtonAtIndex:index];
+    if(button != nil){
+        button.disabled = !enabled;
+        button.highlighted = !enabled;
+        if (enabled) {
+            [self setEnabledStateForButton:button];
+        } else {
+            [self setDisabledStateForButton:button];
+        }
+
+    }
+}
+
 #pragma mark - Setup UI methods
+
+- (void)setUpButtonElements{
+    _buttonFont = [UIFont systemFontOfSize:21.0];
+    _normalButtonStateColor = nil;
+    _disabledButtonStateColor = nil;
+}
 
 - (void)setupTitleLabel
 {
@@ -646,15 +716,18 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
         button.contentEdgeInsets = UIEdgeInsetsMake(10, 0, 10, 0);
         button.showBottomLine = buttonTitle != _mutableButtonTitles.lastObject;
 
-        NSMutableAttributedString *attributed = [[NSMutableAttributedString alloc] initWithString:buttonTitle
-                                                                                       attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:21.0]}];
+        //set enabled button atributes
+        NSMutableDictionary *enabledAtributes = [NSMutableDictionary dictionaryWithDictionary:@{NSFontAttributeName:_buttonFont}];
+        
+        NSMutableAttributedString *attributedTextEnabled = [[NSMutableAttributedString alloc] initWithString:buttonTitle
+                                                                                                  attributes:enabledAtributes];
+       
         if (self.isDestructiveSection)
         {
-            [attributed addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(0, buttonTitle.length)];
+            [attributedTextEnabled addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(0, buttonTitle.length)];
         }
-        
-        [button setAttributedTitle:attributed forState:UIControlStateNormal];
         [button setBackgroundColor:kYCHActionSheetDefaultBackgroundColor];
+        [button setAttributedTitle:attributedTextEnabled forState:UIControlStateNormal];
         
         [_mutableButtons addObject:button];
     }
