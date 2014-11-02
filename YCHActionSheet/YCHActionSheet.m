@@ -192,6 +192,15 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     [self setupSectionViews];
 }
 
+#pragma mark - Event handlers
+
+// prevent title label from propagating touches to the overlay view (causing dismissal of the action sheet)
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    UIView *hitView = [super hitTest:point withEvent:event];
+    return [hitView isKindOfClass:[YCHLabel class]] ? nil : hitView;
+}
+
 #pragma mark - Public methods
 
 - (NSInteger)addSection:(YCHActionSheetSection *)section
@@ -635,6 +644,7 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
     self.titleLabel.textColor = [UIColor grayColor];
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
     self.titleLabel.backgroundColor = kYCHActionSheetDefaultBackgroundColor;
+    self.titleLabel.userInteractionEnabled = YES;
 }
 
 - (void)setupButtons
