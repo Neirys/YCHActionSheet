@@ -49,7 +49,7 @@ then display it with :
 - (void)actionSheet:(YCHActionSheet *)actionSheet clickedButtonAtIndex:(NSUInteger)buttonIndex sectionIndex:(NSUInteger)sectionIndex;
 
 // called when a user clicked on the Cancel button
-- (void)actionSheetDidCancel:(YCHActionSheet *)actionSheet;
+- (void)didCancelActionSheet:(YCHActionSheet *)actionSheet;
 
 // called before / after an action sheet is shown
 - (void)willPresentActionSheet:(YCHActionSheet *)actionSheet;
