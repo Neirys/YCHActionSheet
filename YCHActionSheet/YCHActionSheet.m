@@ -488,9 +488,9 @@ void YCHDrawBottomGradientLine(CGContextRef context, CGRect rect, CGFloat width)
 
 - (void)cancelButtonWasTouched:(id)sender
 {
-    if ([self.delegate respondsToSelector:@selector(actionSheetDidCancel:)])
+    if ([self.delegate respondsToSelector:@selector(didCancelActionSheet:)])
     {
-        [self.delegate actionSheetDidCancel:self];
+        [self.delegate didCancelActionSheet:self];
     }
     
     [self dismiss];
