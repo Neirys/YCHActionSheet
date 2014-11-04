@@ -126,4 +126,7 @@
 // return a button title for a given index. crash if index is out of bounds
 - (NSString *)buttonTitleAtIndex:(NSInteger)index;
 
+//enable or disable a button at a specific index
+- (void)setEnabled:(BOOL)enabled buttonAtIndex:(NSInteger)index;
+
 @end
